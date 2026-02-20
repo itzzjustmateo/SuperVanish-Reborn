@@ -1,18 +1,77 @@
+# Compiled class files
 *.class
+
+# Build output directories
 target/
 out/
+bin/
+build/
 
-# Mobile Tools for Java (J2ME)
+# IDE directories and files
+.idea/
+*.iml
+*.ipr
+*.iws
+*.eml
+.vscode/
+.settings/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Java/JVM files
+*.log
+*.tmp
+*.bak
+*.backup
+
+# Useful for crash logs and configs
+hs_err_pid*
+replay_pid*.log
+
+# Gradle & Maven wrappers
+.gradle/
+mvnw
+mvnw.cmd
+
+# J2ME / Mobile Tools for Java
 .mtj.tmp/
 
-# IntelliJ files
-.idea/
-*.eml
-*.iml
+# Libraries & dependency caches
+*.jar
+*.war
+*.ear
 
+# Minecraft specific
+plugins/SuperVanish-Reborn/config.yml
+plugins/SuperVanish-Reborn/data.yml
+plugins/SuperVanish-Reborn/*.db
+plugins/SuperVanish-Reborn/storage.sqlite
+plugins/SuperVanish-Reborn/backups/
+plugins/SuperVanish-Reborn/logs/
+plugins/SuperVanish-Reborn/playerdata/
 
-# Eclipse files
-.settings
+# Server files (for local/server dev)
+server.properties
+eula.txt
+logs/
+crash-reports/
+world/
+world_nether/
+world_the_end/
+*.dat
+*.mca
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# User files
+*.user
+*.sublime-workspace
+*.sublime-project
+
+# Git
+.git/
+COMMIT.md

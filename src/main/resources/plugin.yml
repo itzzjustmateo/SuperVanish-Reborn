@@ -1,10 +1,10 @@
-name: SuperVanish
-main: de.myzelyam.supervanish.SuperVanish
-author: MyzelYam
-description: Advanced /vanish plugin which makes other players think that you're not on the server
+name: SuperVanishReborn
+main: de.devflare.svreborn.SuperVanishReborn
+author: ItzzMateo
+description: A fork of the popular SuperVanish plugin
 version: ${project.version}
-api-version: 1.13
-website: https://www.spigotmc.org/resources/supervanish-be-invisible.1331/
+api-version: 1.21
+website: https://supervanish.devflare.de
 softdepend:
 - ProtocolLib
 - LibsDisguises
@@ -21,8 +21,8 @@ softdepend:
 commands:
   sv:
     usage: /sv
-    description: SuperVanish's main command
-    aliases: [supervanish, v, vanish]
+    description: SuperVanishReborn's main command
+    aliases: [supervanish, v, vanish, svr, svreborn]
 permissions:
   sv.*:
     children:
