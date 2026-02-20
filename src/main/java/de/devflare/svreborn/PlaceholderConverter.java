@@ -1,5 +1,5 @@
 /*
- * Copyright Ãƒâ€šÃ‚Â© 2015, Leon Mangler and the SuperVanish contributors
+ * Copyright © 2015, Leon Mangler and the SuperVanish contributors
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,11 +11,12 @@ package de.devflare.svreborn;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,8 +24,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import de.devflare.svreborn.hooks.PlaceholderAPIHook;
@@ -41,7 +40,7 @@ public class PlaceholderConverter {
     public String replacePlaceholders(String msg, Object... additionalPlayerInfo) {
         Validation.checkIsTrue("Failed to replace variables (Illegal arguments)",
                 msg != null, additionalPlayerInfo != null);
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         Validation.checkIsTrue(additionalPlayerInfo.length > 0);
         // check vararg
         final List<Object> additionalPlayerInfoList = Arrays
@@ -50,17 +49,16 @@ public class PlaceholderConverter {
         String unspecifiedOtherPlayersName = null;
         if (additionalPlayerInfoList.size() > 1
                 && (additionalPlayerInfoList.get(1) instanceof String
-                || additionalPlayerInfoList.get(1) instanceof Player)) {
+                        || additionalPlayerInfoList.get(1) instanceof Player)) {
             unspecifiedOtherPlayersName = (String) (additionalPlayerInfoList
                     .get(1) instanceof Player
-                    ? ((Player) additionalPlayerInfoList.get(1)).getName()
-                    : additionalPlayerInfoList.get(1));
+                            ? ((Player) additionalPlayerInfoList.get(1)).getName()
+                            : additionalPlayerInfoList.get(1));
         }
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         msg = msg.replace("\\n", "\n");
         // replace sender specific variables
-        replaceVariables:
-        {
+        replaceVariables: {
             if (unspecifiedPlayer instanceof OfflinePlayer
                     && !(unspecifiedPlayer instanceof Player)) {
                 // offline player
@@ -82,7 +80,8 @@ public class PlaceholderConverter {
                         .replace("%tab%", specifiedPlayer.getName());
                 // replace other player's name if possible
                 msg = msg.replace("%other%", unspecifiedOtherPlayersName != null
-                        ? unspecifiedOtherPlayersName : "UNKNOWN");
+                        ? unspecifiedOtherPlayersName
+                        : "UNKNOWN");
                 break replaceVariables;
             }
             if (unspecifiedPlayer instanceof Player) {
@@ -92,7 +91,7 @@ public class PlaceholderConverter {
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
                         && plugin.getSettings().getBoolean("HookOptions.EnablePlaceholderAPIHook", true)) {
                     String replaced = PlaceholderAPIHook.translatePlaceholders(msg, specifiedPlayer);
-                    //noinspection ConstantConditions
+                    // noinspection ConstantConditions
                     msg = replaced == null ? msg : replaced;
                 }
                 // MVdWPlaceholderAPI
@@ -144,7 +143,8 @@ public class PlaceholderConverter {
                                 "" + specifiedPlayer.getPlayerListName());
                 // replace other player's name if possible
                 msg = msg.replace("%other%", unspecifiedOtherPlayersName != null
-                        ? unspecifiedOtherPlayersName : "UNKNOWN");
+                        ? unspecifiedOtherPlayersName
+                        : "UNKNOWN");
 
                 break replaceVariables;
             }
@@ -155,21 +155,15 @@ public class PlaceholderConverter {
                         .replace("%tab%", "Console");
                 // replace other player's name if possible
                 msg = msg.replace("%other%", unspecifiedOtherPlayersName != null
-                        ? unspecifiedOtherPlayersName : "UNKNOWN");
+                        ? unspecifiedOtherPlayersName
+                        : "UNKNOWN");
             }
         }
         // convert color codes
-        if (plugin.getVersionUtil().isOneDotXOrHigher(16)) {
-            Pattern pattern = Pattern.compile("\\{?&?#[a-fA-F0-9]{6}\\}?");
-            Matcher matcher = pattern.matcher(msg);
-
-            while (matcher.find()) {
-                String color = msg.substring(matcher.start(), matcher.end());
-                msg = msg.replace(color, net.md_5.bungee.api.ChatColor.of(color.replace("&", "").replace("{", "").replace("}", "")) + "");
-                matcher = pattern.matcher(msg);
-            }
+        if (msg.contains("&") || msg.contains("§")) {
+            // Convert legacy codes to MiniMessage tags for internal consistency
+            msg = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
         }
-        msg = ChatColor.translateAlternateColorCodes('&', msg);
         return msg;
     }
 }

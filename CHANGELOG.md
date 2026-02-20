@@ -39,6 +39,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Resolved compilation errors in `VersionUtil.java` by correcting illegal escape characters in version splitting logic.
+- Fixed compilation errors in `ActionBarMgr.java` and `VanishIndication.java` regarding unreachable `InvocationTargetException` catch blocks due to ProtocolLib 5.x API changes.
+- Modernized messaging system by switching to **Adventure API** and **MiniMessage**.
+- Replaced legacy `&` color codes with MiniMessage tags in `messages.yml`.
+- Resolved deprecation of `spigot().sendMessage` and `fromLegacyText`.
+- Fixed corrupted copyright header encoding across all source files.
 
 ### Security
 

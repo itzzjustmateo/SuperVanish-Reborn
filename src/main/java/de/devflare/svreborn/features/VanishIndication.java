@@ -1,5 +1,5 @@
 /*
- * Copyright Ãƒâ€šÃ‚Â© 2015, Leon Mangler and the SuperVanish contributors
+ * Copyright © 2015, Leon Mangler and the SuperVanish contributors
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,7 +30,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -87,7 +86,8 @@ public class VanishIndication extends Feature {
                 }
             // tell p that others are spectators
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (!plugin.getVanishStateMgr().isVanished(onlinePlayer.getUniqueId())) continue;
+                if (!plugin.getVanishStateMgr().isVanished(onlinePlayer.getUniqueId()))
+                    continue;
                 if (!plugin.getVisibilityChanger().getHider().isHidden(onlinePlayer, p)
                         && p != onlinePlayer) {
                     sendPlayerInfoChangeGameModePacket(p, onlinePlayer, true);
@@ -113,7 +113,7 @@ public class VanishIndication extends Feature {
                                     if (!VanishIndication.this.plugin.getVisibilityChanger().getHider()
                                             .isHidden(infoData.getProfile().getUUID(), receiver)
                                             && VanishIndication.this.plugin.getVanishStateMgr()
-                                            .isVanished(infoData.getProfile().getUUID())) {
+                                                    .isVanished(infoData.getProfile().getUUID())) {
                                         if (!receiver.getUniqueId().equals(infoData.getProfile().getUUID()))
                                             if (infoData.getGameMode() != EnumWrappers.NativeGameMode.SPECTATOR) {
                                                 int latency;
@@ -122,8 +122,8 @@ public class VanishIndication extends Feature {
                                                 } catch (NoSuchMethodError e) {
                                                     latency = 21;
                                                 }
-                                                if (event.getPacket().getPlayerInfoAction().read(0)
-                                                        != EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE) {
+                                                if (event.getPacket().getPlayerInfoAction()
+                                                        .read(0) != EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE) {
                                                     continue;
                                                 }
                                                 PlayerInfoData newData = new PlayerInfoData(infoData.getProfile(),
@@ -140,9 +140,12 @@ public class VanishIndication extends Feature {
                         } catch (Exception | NoClassDefFoundError e) {
                             if (!suppressErrors) {
                                 VanishIndication.this.plugin.logException(e);
-                                plugin.getLogger().warning("IMPORTANT: Please make sure that you are using the latest " +
-                                        "dev-build of ProtocolLib and that your server is up-to-date! This error likely " +
-                                        "happened inside of ProtocolLib code which is out of SuperVanish's control. It's part " +
+                                plugin.getLogger().warning("IMPORTANT: Please make sure that you are using the latest "
+                                        +
+                                        "dev-build of ProtocolLib and that your server is up-to-date! This error likely "
+                                        +
+                                        "happened inside of ProtocolLib code which is out of SuperVanish's control. It's part "
+                                        +
                                         "of an optional feature module and can be removed safely by disabling " +
                                         "MarkVanishedPlayersAsSpectators in the config file. Please report this " +
                                         "error if you can reproduce it on an up-to-date server with only latest " +
@@ -166,7 +169,7 @@ public class VanishIndication extends Feature {
         packet.getPlayerInfoDataLists().write(0, data);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Cannot send packet", e);
         }
     }

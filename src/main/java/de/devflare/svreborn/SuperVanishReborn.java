@@ -1,5 +1,5 @@
 /*
- * Copyright Ãƒâ€šÃ‚Â© 2015, Leon Mangler and the SuperVanish contributors
+ * Copyright © 2015, Leon Mangler and the SuperVanish contributors
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,15 +45,15 @@ import java.util.logging.Level;
 
 public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
 
-    public static final String[] NON_REQUIRED_SETTINGS_UPDATES = {"6.0.0", "6.0.1", "6.0.2", "6.0.3",
+    public static final String[] NON_REQUIRED_SETTINGS_UPDATES = { "6.0.0", "6.0.1", "6.0.2", "6.0.3",
             "6.0.4", "6.0.5", "6.1.0", "6.1.1", "6.1.2", "6.1.3", "6.1.4", "6.1.5", "6.1.6", "6.1.7",
             "6.1.8", "6.2.0", "6.2.1", "6.2.2", "6.2.3", "6.2.4", "6.2.5", "6.2.6", "6.2.7", "6.2.8",
             "6.2.9", "6.2.10", "6.2.11", "6.2.12", "6.2.13", "6.2.14", "6.2.15", "6.2.16", "6.2.17",
-            "6.2.18", "6.2.19", "6.2.20"},
-            NON_REQUIRED_MESSAGES_UPDATES = {"6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.0.5", "6.1.0",
+            "6.2.18", "6.2.19", "6.2.20" },
+            NON_REQUIRED_MESSAGES_UPDATES = { "6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.0.5", "6.1.0",
                     "6.1.1", "6.1.2", "6.1.3", "6.1.4", "6.1.5", "6.1.6", "6.1.7", "6.1.8", "6.2.0", "6.2.1",
                     "6.2.2", "6.2.3", "6.2.4", "6.2.5", "6.2.6", "6.2.7", "6.2.8", "6.2.9", "6.2.10", "6.2.11",
-                    "6.2.12", "6.2.13", "6.2.14", "6.2.15", "6.2.16", "6.2.17", "6.2.18", "6.2.19", "6.2.20"};
+                    "6.2.12", "6.2.13", "6.2.14", "6.2.15", "6.2.16", "6.2.17", "6.2.18", "6.2.19", "6.2.20" };
 
     @Getter
     private boolean useProtocolLib;
@@ -87,9 +87,10 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
     public void onEnable() {
         try {
             useProtocolLib = getServer().getPluginManager().isPluginEnabled("ProtocolLib");
-            if (!useProtocolLib) log(Level.INFO,
-                    "Please install ProtocolLib to be able to use all SuperVanish features: " +
-                            "https://www.spigotmc.org/resources/protocollib.1997/");
+            if (!useProtocolLib)
+                log(Level.INFO,
+                        "Please install ProtocolLib to be able to use all SuperVanish features: " +
+                                "https://www.spigotmc.org/resources/protocollib.1997/");
             configMgr = new ConfigMgr(this);
             configMgr.prepareFiles();
             placeholderConverter = new PlaceholderConverter(this);
@@ -123,11 +124,13 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
     @Override
     public void onDisable() {
         try {
-            if (featureMgr != null) featureMgr.disableFeatures();
+            if (featureMgr != null)
+                featureMgr.disableFeatures();
             vanishPlayers.clear();
             VanishAPI.setPlugin(null);
         } catch (Throwable e) {
-            if (e instanceof ThreadDeath || e instanceof VirtualMachineError) throw e;
+            if (e instanceof ThreadDeath || e instanceof VirtualMachineError)
+                throw e;
             if (!(e instanceof NoClassDefFoundError | e instanceof NoSuchMethodError)) {
                 e.printStackTrace();
             }
@@ -194,7 +197,8 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         try {
             String eventName = eventClass.getSimpleName();
             String configString = getSettings().getString("CompatibilityOptions." + eventName + "Priority");
-            if (configString == null) return EventPriority.NORMAL;
+            if (configString == null)
+                return EventPriority.NORMAL;
             EventPriority priority = EventPriority.valueOf(configString);
             return priority;
         } catch (Exception e) {
@@ -243,11 +247,12 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         String message;
         if (!messagesYmlPath.contains(" ") && getMessage(messagesYmlPath) != null)
             message = getMessage(messagesYmlPath);
-        else message = messagesYmlPath;
+        else
+            message = messagesYmlPath;
         if ("".equalsIgnoreCase(message) || "".equalsIgnoreCase(messagesYmlPath))
             return;
         message = replacePlaceholders(message, additionalPlayerInfo);
-        p.sendMessage(message);
+        p.sendMessage(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(message));
     }
 
     public boolean canSee(Player viewer, Player viewed) {

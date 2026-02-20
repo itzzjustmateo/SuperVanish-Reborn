@@ -1,5 +1,5 @@
 /*
- * Copyright Ãƒâ€šÃ‚Â© 2015, Leon Mangler and the SuperVanish contributors
+ * Copyright © 2015, Leon Mangler and the SuperVanish contributors
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,9 +15,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import de.devflare.svreborn.SuperVanishReborn;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -48,7 +46,8 @@ public class ActionBarMgr {
                         plugin.logException(e);
                         plugin.getLogger().warning("IMPORTANT: Please make sure that you are using the latest " +
                                 "dev-build of ProtocolLib and that your server is up-to-date! This error likely " +
-                                "happened inside of ProtocolLib code which is out of SuperVanish's control. It's part " +
+                                "happened inside of ProtocolLib code which is out of SuperVanish's control. It's part "
+                                +
                                 "of an optional feature module and can be removed safely by disabling " +
                                 "DisplayActionBar in the config file. Please report this " +
                                 "error if you can reproduce it on an up-to-date server with only latest " +
@@ -61,26 +60,26 @@ public class ActionBarMgr {
 
     private void sendActionBar(Player p, String bar) {
         try {
-            Class.forName("net.md_5.bungee.api.chat.ComponentBuilder");
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar));
-        } catch (ClassNotFoundException | NoSuchMethodError | NoClassDefFoundError er) {
-            String json = "{\"text\": \"" + ChatColor.translateAlternateColorCodes('&', bar) + "\"}";
-            WrappedChatComponent msg = WrappedChatComponent.fromJson(json);
+            p.sendActionBar(MiniMessage.miniMessage().deserialize(bar));
+        } catch (Exception | NoSuchMethodError | NoClassDefFoundError er) {
+            WrappedChatComponent msg = WrappedChatComponent
+                    .fromJson(net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson()
+                            .serialize(MiniMessage.miniMessage().deserialize(bar)));
             PacketContainer chatMsg = new PacketContainer(PacketType.Play.Server.CHAT);
             chatMsg.getChatComponents().write(0, msg);
-            if (plugin.getVersionUtil().isOneDotXOrHigher(12))
+            if (plugin.getVersionUtil().isOneDotXOrHigher(12)) {
                 try {
                     chatMsg.getChatTypes().write(0, EnumWrappers.ChatType.GAME_INFO);
-                } catch (NoSuchMethodError e) {
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText
-                            ("SuperVanish: Please update ProtocolLib"));
+                } catch (NoSuchMethodError | Exception e) {
+                    // Ignore or fallback
                 }
-            else
+            } else {
                 chatMsg.getBytes().write(0, (byte) 2);
+            }
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(p, chatMsg);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException("Cannot send packet " + chatMsg, e);
+            } catch (Exception e) {
+                plugin.logException(e);
             }
         }
     }
