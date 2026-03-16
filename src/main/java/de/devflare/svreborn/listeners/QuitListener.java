@@ -38,21 +38,21 @@ public class QuitListener implements EventExecutor, Listener {
                 if (plugin.getVanishStateMgr().isVanished(p.getUniqueId())) {
                     // remove action bar
                     if (plugin.getActionBarMgr() != null && plugin.getSettings().getBoolean(
-                            "MessageOptions.DisplayActionBar")) {
+                            "message_options.display_action_bar")) {
                         plugin.getActionBarMgr().removeActionBar(p);
                     }
                     // check auto-reappear-option
                     boolean noMsg = false;
-                    if (plugin.getSettings().getBoolean("VanishStateFeatures.ReappearOnQuit")
-                            || plugin.getSettings().getBoolean("VanishStateFeatures.CheckPermissionOnQuit")
-                            && !CommandAction.VANISH_SELF.checkPermission(p, plugin)) {
+                    if (plugin.getSettings().getBoolean("vanish_state_features.reappear_on_quit")
+                            || plugin.getSettings().getBoolean("vanish_state_features.check_permission_on_quit")
+                                    && !CommandAction.VANISH_SELF.checkPermission(p, plugin)) {
                         plugin.getVanishStateMgr().setVanishedState(p.getUniqueId(), p.getName(), false, null);
                         // check if it should handle the quit msg
-                        if (!config.getBoolean("MessageOptions.ReappearOnQuitHideLeaveMsg"))
+                        if (!config.getBoolean("message_options.reappear_on_quit_hide_leave_msg"))
                             noMsg = true;
                     }
                     // check remove-quit-msg option
-                    if (!noMsg && config.getBoolean("MessageOptions.HideRealJoinQuitMessages")) {
+                    if (!noMsg && config.getBoolean("message_options.hide_real_join_quit_messages")) {
                         e.setQuitMessage(null);
                         Broadcast.announceSilentQuit(p, plugin);
                     }

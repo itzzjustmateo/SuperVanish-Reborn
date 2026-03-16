@@ -24,7 +24,7 @@ public class PrintStacktrace extends SubCommand {
     @Override
     public void execute(Command cmd, CommandSender sender, String[] args, String label) {
         if (canDo(sender, CommandAction.PRINT_STACKTRACE, true)) {
-            plugin.sendMessage(sender, "PrintedStacktrace", sender);
+            plugin.sendMessage(sender, "printed_stacktrace", sender);
             plugin.logException(null);
         }
     }

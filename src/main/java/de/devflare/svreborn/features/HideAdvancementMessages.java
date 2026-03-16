@@ -21,9 +21,12 @@ public class HideAdvancementMessages extends Feature {
         try {
             Player p = e.getPlayer();
             Component message = e.message();
-            if (message == null) return;
-            if (!plugin.getVanishStateMgr().isVanished(p.getUniqueId())) return;
-            if (e.message() == null) return;
+            if (message == null)
+                return;
+            if (!plugin.getVanishStateMgr().isVanished(p.getUniqueId()))
+                return;
+            if (e.message() == null)
+                return;
             e.message(null);
             p.sendMessage(message);
         } catch (Exception er) {
@@ -36,6 +39,6 @@ public class HideAdvancementMessages extends Feature {
 
     @Override
     public boolean isActive() {
-        return plugin.getSettings().getBoolean("MessageOptions.HideAdvancementMessages", true);
+        return plugin.getSettings().getBoolean("message_options.hide_advancement_messages", true);
     }
 }

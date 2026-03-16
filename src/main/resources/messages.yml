@@ -6,14 +6,14 @@
 # You can use <#XXXXXX> for HEX color codes. Example: '<#663EF6>This text would be purple!'
 # Standard MiniMessage tags like <bold>, <italic>, <underlined>, <strikethrough>, <obfuscated> work too.
 #
-# You can use %p% to get the player's name; Example: '<dark_red><bold>%p%, you aren''t allowed to execute this command!'
-# You can use %other% to get the name of the target or cause
-# You can use %d% to get the player's display name
-# You can use %tab% to get the player's name in the player list (TAB)
-# You can use %prefix% to get the player's prefix (Requires Vault)
-# You can use %suffix% to get the player's suffix (Requires Vault)
-# You can use %group% to get the player's group (Requires Vault)
-# You can use %nick% to get the player's nickname (Requires Essentials)
+# You can use %player% to get the player's name; Example: '<dark_red><bold>%player%, you aren''t allowed to execute this command!'
+# You can use %target% to get the name of the target or cause
+# You can use %display_name% to get the player's display name
+# You can use %tab_name% to get the player's name in the player list (TAB)
+# You can use %vault_prefix% to get the player's prefix (Requires Vault)
+# You can use %vault_suffix% to get the player's suffix (Requires Vault)
+# You can use %vault_group% to get the player's group (Requires Vault)
+# You can use %essentials_nick% to get the player's nickname (Requires Essentials)
 # Some messages allow different, unique variables too
 #
 # NOTE: You can get WAY more placeholders by installing PlaceholderAPI or MVdWPlaceholderAPI
@@ -25,55 +25,63 @@
 # You must double single quotes if you want to use them inside a message.
 # You must NOT use any tab characters inside this file!
 #
-Messages:
-  NoPermission: '<dark_red>Denied access! You are not allowed to do this.'
-  InvalidUsage: '<red>Invalid usage, you can use <gold>/sv help</gold><red> for a list of commands.'
-  VanishMessage: '<yellow>%p% left the game'
-  ReappearMessage: '<yellow>%p% joined the game'
-  VanishMessageWithPermission: '<green>[SV] %p% vanished.'
-  ReappearMessageWithPermission: '<green>[SV] %p% reappeared.'
-  OnVanish: '<green>You are now invisible!'
-  OnReappear: '<green>You are no longer invisible!'
-  OnVanishCausedByOtherPlayer: '<green>%other% hid you, you are now invisible!'
-  OnReappearCausedByOtherPlayer: '<green>%other% showed you, you are now visible!'
-  AlreadyVanishedError: '<red>You are already invisible!'
-  NotVanishedError: '<red>You are not invisible!'
-  SilentJoinMessageForAdmins: '<green>[SV] %p% joined silently.'
-  SilentQuitMessageForAdmins: '<green>[SV] %p% left silently.'
-  SilentDeathMessage: '<green>[SV] %deathmsg%'
-  RemindingMessage: '<green>You are still invisible!'
-  ListMessagePrefix: '<green>Invisible Players:<white> %l'
-  ActionBarMessage: '<green>You are invisible to other players!'
-  HideOtherMessage: '<green>Player <yellow>%other%</yellow><green> is now invisible!'
-  ShowOtherMessage: '<green>Player <yellow>%other%</yellow><green> is now visible!'
-  CannotHideOtherPlayer: '<red>You''re not allowed to change %other%''s visibility!'
-  AlreadyInvisibleMessage: '<red>Player <yellow>%other%</yellow><red> is already invisible!'
-  AlreadyVisibleMessage: '<red>Player <yellow>%other%</yellow><red> is already visible!'
-  PluginReloaded: '<green>Successfully reloaded SuperVanish (%time%ms)!'
-  InvalidSender: '<red>You must be a player to execute this command!'
-  PlayerNotOnline: '<red>That player is not online!'
-  PlayerNonExistent: '<red>That player doesn''t exist!'
-  ToggledPickingUpItemsOn: '<yellow>Picking up items is now turned <green>ON</green><yellow>.'
-  ToggledPickingUpItemsOff: '<yellow>Picking up items is now turned <red>OFF</red><yellow>.'
-  UpdateWarning: '<red>Warning! Recreating %updates% resets %changes%. Please use <yellow>/sv recreatefiles confirm</yellow><red> if you''d like to continue.'
-  RecreatedConfig: '<green>Successfully recreated %updates%! Please check %changes%.'
-  NoConfigUpdateAvailable: '<yellow>Your SuperVanish-files are up to date!'
-  RecreationRequiredMsg: '<red>[SV] Your SuperVanish-files are not up to date, you can use <yellow>/sv recreatefiles</yellow><red> to recreate them
-  or use /sv recreatefiles dismiss to dismiss this message.
-  Recreating SuperVanish''s files gives you access to newer settings and features of the plugin.'
-  DismissedRecreationWarning: '<yellow>You are no longer receiving notifications about this recreation.'
-  UndismissedRecreationWarning: '<yellow>You are now receiving notifications about this recreation.'
-  PrintedStacktrace: '<yellow>Successfully created a stacktrace, see console!'
-  EntityHitDenied: '<red>[SV] You can''t hit players or mobs in vanish!'
-  BlockPlaceDenied: '<red>[SV] You can''t place blocks in vanish!'
-  BlockBreakDenied: '<red>[SV] You can''t break blocks in vanish!'
-  PluginOutdated: '<red>[SV] Your current version of SuperVanish is outdated. New version: ''%new%''; Currently: ''%current%'''
-  DynmapFakeJoin: '%d% joined'
-  DynmapFakeQuit: '%d% quit'
-  HelpHeader: "<green><---------------<yellow> SuperVanish-Help </yellow><green>--------------->"
-  HelpFormat: "<gold>%usage% <gray>- <aqua>%description% <red>(%permission%)"
-  PlaceholderIsVanishedYes: "Yes"
-  PlaceholderIsVanishedNo: "No"
-  PlaceholderVanishPrefix: '<green>[V] <reset>'
-  PlaceholderVanishSuffix: ' <reset><green>[V]'
-MessagesVersion: ${project.version}
+
+# The prefix that will be prepended to all messages below
+# Set to '' to disable
+prefix: "<gray>[<blue>SVR<gray>] "
+
+messages:
+  no_permission: "<dark_red>Denied access! You are not allowed to do this."
+  invalid_usage: "<red>Invalid usage, you can use <gold>/sv help</gold><red> for a list of commands."
+  vanish_message: "<yellow>%player% left the game"
+  reappear_message: "<yellow>%player% joined the game"
+  vanish_message_with_permission: "<green>[SVR] %player% vanished."
+  reappear_message_with_permission: "<green>[SVR] %player% reappeared."
+  on_vanish: "<green>You are now invisible!"
+  on_reappear: "<green>You are no longer invisible!"
+  on_vanish_caused_by_other_player: "<green>%target% hid you, you are now invisible!"
+  on_reappear_caused_by_other_player: "<green>%target% showed you, you are now visible!"
+  already_vanished_error: "<red>You are already invisible!"
+  not_vanished_error: "<red>You are not invisible!"
+  silent_join_message_for_admins: "<green>[SVR] %player% joined silently."
+  silent_quit_message_for_admins: "<green>[SVR] %player% left silently."
+  silent_death_message: "<green>[SVR] %death_message%"
+  reminding_message: "<green>You are still invisible!"
+  list_message_prefix: "<green>Invisible Players:<white> %list%"
+  action_bar_message: "<green>You are invisible to other players!"
+  hide_other_message: "<green>Player <yellow>%target%</yellow><green> is now invisible!"
+  show_other_message: "<green>Player <yellow>%target%</yellow><green> is now visible!"
+  cannot_hide_other_player: "<red>You're not allowed to change %target%'s visibility!"
+  already_invisible_message: "<red>Player <yellow>%target%</yellow><red> is already invisible!"
+  already_visible_message: "<red>Player <yellow>%target%</yellow><red> is already visible!"
+  plugin_reloaded: "<green>Successfully reloaded SuperVanish (%cooldown_time%ms)!"
+  invalid_sender: "<red>You must be a player to execute this command!"
+  player_not_online: "<red>That player is not online!"
+  player_non_existent: "<red>That player doesn't exist!"
+  toggled_picking_up_items_on: "<yellow>Picking up items is now turned <green>ON</green><yellow>."
+  toggled_picking_up_items_off: "<yellow>Picking up items is now turned <red>OFF</red><yellow>."
+  update_warning: "<red>Warning! Recreating %updates% resets %changes%. Please use <yellow>/sv recreatefiles confirm</yellow><red> if you'd like to continue."
+  recreated_config: "<green>Successfully recreated %updates%! Please check %changes%."
+  no_config_update_available: "<yellow>Your SuperVanish-files are up to date!"
+  recreation_required_msg: |
+    <red>[SVR] Your SuperVanish-files are not up to date, you can use <yellow>/sv recreatefiles</yellow><red> to recreate them
+    or use /sv recreatefiles dismiss to dismiss this message.
+    Recreating SuperVanish''s files gives you access to newer settings and features of the plugin.
+  dismissed_recreation_warning: "<yellow>You are no longer receiving notifications about this recreation."
+  undismissed_recreation_warning: "<yellow>You are now receiving notifications about this recreation."
+  printed_stacktrace: "<yellow>Successfully created a stacktrace, see console!"
+  entity_hit_denied: "<red>[SVR] You can't hit players or mobs in vanish!"
+  block_place_denied: "<red>[SVR] You can't place blocks in vanish!"
+  block_break_denied: "<red>[SVR] You can't break blocks in vanish!"
+  plugin_outdated: "<red>[SVR] Your current version of SuperVanish is outdated. New version: '%new_version%'; Currently: '%current_version%'"
+  dynmap_fake_join: "%display_name% joined"
+  dynmap_fake_quit: "%display_name% quit"
+  help_header: "<green><---------------<yellow> SuperVanish-Help </yellow><green>--------------->"
+  help_format: "<gold>%usage% <gray>- <aqua>%description% <red>(%permission%)"
+  placeholder_is_vanished_yes: "Yes"
+  placeholder_is_vanished_no: "No"
+  placeholder_vanish_prefix: "<green>[V] <reset>"
+  placeholder_vanish_suffix: " <reset><green>[V]"
+
+################# Do Not Touch ###################
+messages_version: ${project.version}

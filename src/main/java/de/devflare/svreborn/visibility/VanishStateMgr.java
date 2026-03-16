@@ -33,4 +33,6 @@ public abstract class VanishStateMgr {
     public abstract Set<UUID> getVanishedPlayers();
 
     public abstract Collection<UUID> getOnlineVanishedPlayers();
+
+    public abstract UUID getVanishedUUIDFromName(String name);
 }

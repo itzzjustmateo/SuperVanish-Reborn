@@ -22,7 +22,6 @@ import de.devflare.svreborn.SuperVanishReborn;
 import de.devflare.svreborn.VanishPlayer;
 import de.devflare.svreborn.features.Broadcast;
 
-
 public class GeneralListener implements Listener {
 
     private final SuperVanishReborn plugin;
@@ -37,13 +36,15 @@ public class GeneralListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageByEntityEvent e) {
         try {
-            if (!(e.getDamager() instanceof Player)) return;
-            if (e.getEntity() == null) return;
+            if (!(e.getDamager() instanceof Player))
+                return;
+            if (e.getEntity() == null)
+                return;
             Player p = (Player) e.getDamager();
             if (plugin.getVanishStateMgr().isVanished(p.getUniqueId())) {
-                if (config.getBoolean("RestrictiveOptions.PreventHittingEntities")
+                if (config.getBoolean("restrictive_options.prevent_hitting_entities")
                         && !p.hasPermission("sv.damageentities") && !p.hasPermission("sv.damage")) {
-                    plugin.sendMessage(p, "EntityHitDenied", p);
+                    plugin.sendMessage(p, "entity_hit_denied", p);
                     e.setCancelled(true);
                 }
             }
@@ -70,7 +71,7 @@ public class GeneralListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         try {
-            if (e.getEntity() instanceof Player && config.getBoolean("InvisibilityFeatures.DisableHunger")) {
+            if (e.getEntity() instanceof Player && config.getBoolean("invisibility_features.disable_hunger")) {
                 Player p = (Player) e.getEntity();
                 if (plugin.getVanishStateMgr().isVanished(p.getUniqueId())
                         && e.getFoodLevel() <= p.getFoodLevel())
@@ -84,9 +85,11 @@ public class GeneralListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent e) {
         try {
-            if (!(e.getEntity() instanceof Player)) return;
+            if (!(e.getEntity() instanceof Player))
+                return;
             Player p = (Player) e.getEntity();
-            if (!config.getBoolean("InvisibilityFeatures.DisableDamage")) return;
+            if (!config.getBoolean("invisibility_features.disable_damage"))
+                return;
             if (plugin.getVanishStateMgr().isVanished(p.getUniqueId())) {
                 e.setCancelled(true);
             }
@@ -98,8 +101,10 @@ public class GeneralListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onTarget(EntityTargetEvent e) {
         try {
-            if (!(e.getTarget() instanceof Player)) return;
-            if (!config.getBoolean("InvisibilityFeatures.DisableMobTarget")) return;
+            if (!(e.getTarget() instanceof Player))
+                return;
+            if (!config.getBoolean("invisibility_features.disable_mob_target"))
+                return;
             Player p = (Player) e.getTarget();
             if (plugin.getVanishStateMgr().isVanished(p.getUniqueId())) {
                 e.setCancelled(true);
@@ -113,10 +118,11 @@ public class GeneralListener implements Listener {
     public void onItemPickUp(PlayerPickupItemEvent e) {
         try {
             VanishPlayer vanishPlayer = plugin.getVanishPlayer(e.getPlayer());
-            if (vanishPlayer == null || !vanishPlayer.isOnlineVanished()) return;
+            if (vanishPlayer == null || !vanishPlayer.isOnlineVanished())
+                return;
             if (!vanishPlayer.hasItemPickUpsEnabled())
                 e.setCancelled(true);
-            if (plugin.getSettings().getBoolean("RestrictiveOptions.PreventModifyingOwnInventory")
+            if (plugin.getSettings().getBoolean("restrictive_options.prevent_modifying_own_inventory")
                     && !e.getPlayer().hasPermission("sv.modifyowninv")) {
                 e.setCancelled(true);
             }
@@ -128,8 +134,10 @@ public class GeneralListener implements Listener {
     @EventHandler
     public void onPlayerCropTrample(PlayerInteractEvent e) {
         try {
-            if (!plugin.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId())) return;
-            if (e.getAction() != Action.PHYSICAL) return;
+            if (!plugin.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId()))
+                return;
+            if (e.getAction() != Action.PHYSICAL)
+                return;
             if (e.getClickedBlock() != null && e.getClickedBlock().getType().toString().matches("SOIL|FARMLAND"))
                 e.setCancelled(true);
         } catch (Exception er) {

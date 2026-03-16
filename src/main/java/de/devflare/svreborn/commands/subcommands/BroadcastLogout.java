@@ -27,7 +27,7 @@ public class BroadcastLogout extends SubCommand {
     public void execute(Command cmd, CommandSender p, String[] args, String label) {
         if (canDo(p, CommandAction.BROADCAST_LOGOUT, true)) {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-                plugin.sendMessage(onlinePlayer, "VanishMessage", p, onlinePlayer);
+                plugin.sendMessage(onlinePlayer, "vanish_message", p, onlinePlayer);
         }
     }
 }

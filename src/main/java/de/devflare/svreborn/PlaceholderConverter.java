@@ -27,7 +27,6 @@ import java.util.List;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import de.devflare.svreborn.hooks.PlaceholderAPIHook;
-import de.devflare.svreborn.utils.Validation;
 
 public class PlaceholderConverter {
 
@@ -38,25 +37,27 @@ public class PlaceholderConverter {
     }
 
     public String replacePlaceholders(String msg, Object... additionalPlayerInfo) {
-        Validation.checkIsTrue("Failed to replace variables (Illegal arguments)",
-                msg != null, additionalPlayerInfo != null);
-        // noinspection ConstantConditions
-        Validation.checkIsTrue(additionalPlayerInfo.length > 0);
+        if (additionalPlayerInfo == null || additionalPlayerInfo.length == 0) {
+            return msg;
+        }
+
         // check vararg
-        final List<Object> additionalPlayerInfoList = Arrays
-                .asList(additionalPlayerInfo);
+        final List<Object> additionalPlayerInfoList = Arrays.asList(additionalPlayerInfo);
         Object unspecifiedPlayer = additionalPlayerInfoList.get(0);
         String unspecifiedOtherPlayersName = null;
+
         if (additionalPlayerInfoList.size() > 1
                 && (additionalPlayerInfoList.get(1) instanceof String
                         || additionalPlayerInfoList.get(1) instanceof Player)) {
-            unspecifiedOtherPlayersName = (String) (additionalPlayerInfoList
-                    .get(1) instanceof Player
-                            ? ((Player) additionalPlayerInfoList.get(1)).getName()
-                            : additionalPlayerInfoList.get(1));
+            unspecifiedOtherPlayersName = (String) (additionalPlayerInfoList.get(1) instanceof Player
+                    ? ((Player) additionalPlayerInfoList.get(1)).getName()
+                    : additionalPlayerInfoList.get(1));
         }
-        // noinspection ConstantConditions
+
+        if (msg == null)
+            return null;
         msg = msg.replace("\\n", "\n");
+
         // replace sender specific variables
         replaceVariables: {
             if (unspecifiedPlayer instanceof OfflinePlayer
@@ -65,20 +66,27 @@ public class PlaceholderConverter {
                 OfflinePlayer specifiedPlayer = (OfflinePlayer) unspecifiedPlayer;
                 // MVdWPlaceholderAPI
                 if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")
-                        && plugin.getSettings().getBoolean("HookOptions.EnableMVdWPlaceholderAPIHook", true)) {
+                        && plugin.getSettings().getBoolean("hook_options.enable_mvdw_placeholder_api_hook", true)) {
                     String replaced = PlaceholderAPI.replacePlaceholders(specifiedPlayer, msg);
                     msg = replaced == null ? msg : replaced;
                 }
                 // replace essentials nick names
-                if (Bukkit.getPluginManager()
-                        .getPlugin("Essentials") != null) {
+                if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+                    msg = msg.replace("%player%", specifiedPlayer.getName());
+                    msg = msg.replace("%essentials_nick%", specifiedPlayer.getName());
                     msg = msg.replace("%nick%", specifiedPlayer.getName());
                 }
                 // replace general variables
-                msg = msg.replace("%d%", specifiedPlayer.getName())
+                msg = msg.replace("%display_name%", specifiedPlayer.getName())
+                        .replace("%player%", specifiedPlayer.getName())
+                        .replace("%tab_name%", specifiedPlayer.getName())
+                        .replace("%d%", specifiedPlayer.getName())
                         .replace("%p%", specifiedPlayer.getName())
                         .replace("%tab%", specifiedPlayer.getName());
                 // replace other player's name if possible
+                msg = msg.replace("%target%", unspecifiedOtherPlayersName != null
+                        ? unspecifiedOtherPlayersName
+                        : "UNKNOWN");
                 msg = msg.replace("%other%", unspecifiedOtherPlayersName != null
                         ? unspecifiedOtherPlayersName
                         : "UNKNOWN");
@@ -89,14 +97,13 @@ public class PlaceholderConverter {
                 Player specifiedPlayer = (Player) unspecifiedPlayer;
                 // PlaceholderAPI
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
-                        && plugin.getSettings().getBoolean("HookOptions.EnablePlaceholderAPIHook", true)) {
+                        && plugin.getSettings().getBoolean("hook_options.enable_placeholder_api_hook", true)) {
                     String replaced = PlaceholderAPIHook.translatePlaceholders(msg, specifiedPlayer);
-                    // noinspection ConstantConditions
                     msg = replaced == null ? msg : replaced;
                 }
                 // MVdWPlaceholderAPI
                 if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")
-                        && plugin.getSettings().getBoolean("HookOptions.EnableMVdWPlaceholderAPIHook", true)) {
+                        && plugin.getSettings().getBoolean("hook_options.enable_mvdw_placeholder_api_hook", true)) {
                     String replaced = PlaceholderAPI.replacePlaceholders(specifiedPlayer, msg);
                     msg = replaced == null ? msg : replaced;
                 }
@@ -106,8 +113,10 @@ public class PlaceholderConverter {
                             .getPluginManager().getPlugin("Essentials");
                     User u = ess.getUser(specifiedPlayer);
                     if (u != null)
-                        if (u.getNickname() != null)
+                        if (u.getNickname() != null) {
+                            msg = msg.replace("%essentials_nick%", u.getNickname());
                             msg = msg.replace("%nick%", u.getNickname());
+                        }
                 }
                 // replace vault info
                 if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
@@ -120,16 +129,20 @@ public class PlaceholderConverter {
                     try {
                         if (permAPI != null) {
                             String group = permAPI.getPrimaryGroup(specifiedPlayer);
-                            if (group != null)
+                            if (group != null) {
+                                msg = msg.replace("%player_group%", group);
                                 msg = msg.replace("%group%", group);
+                            }
                         }
                         if (chatAPI != null) {
                             String prefix = chatAPI.getPlayerPrefix(specifiedPlayer);
                             String suffix = chatAPI.getPlayerSuffix(specifiedPlayer);
                             if (prefix != null) {
+                                msg = msg.replace("%vault_prefix%", prefix);
                                 msg = msg.replace("%prefix%", prefix);
                             }
                             if (suffix != null) {
+                                msg = msg.replace("%vault_suffix%", suffix);
                                 msg = msg.replace("%suffix%", suffix);
                             }
                         }
@@ -137,11 +150,21 @@ public class PlaceholderConverter {
                     }
                 }
                 // replace general variables
-                msg = msg.replace("%d%", "" + specifiedPlayer.getDisplayName())
-                        .replace("%p%", "" + specifiedPlayer.getName())
+                msg = msg
+                        .replace("%display_name%",
+                                LegacyComponentSerializer.legacySection().serialize(specifiedPlayer.displayName()))
+                        .replace("%player%", specifiedPlayer.getName())
+                        .replace("%tab_name%",
+                                LegacyComponentSerializer.legacySection().serialize(specifiedPlayer.playerListName()))
+                        .replace("%d%",
+                                LegacyComponentSerializer.legacySection().serialize(specifiedPlayer.displayName()))
+                        .replace("%p%", specifiedPlayer.getName())
                         .replace("%tab%",
-                                "" + specifiedPlayer.getPlayerListName());
+                                LegacyComponentSerializer.legacySection().serialize(specifiedPlayer.playerListName()));
                 // replace other player's name if possible
+                msg = msg.replace("%target%", unspecifiedOtherPlayersName != null
+                        ? unspecifiedOtherPlayersName
+                        : "UNKNOWN");
                 msg = msg.replace("%other%", unspecifiedOtherPlayersName != null
                         ? unspecifiedOtherPlayersName
                         : "UNKNOWN");
@@ -151,9 +174,14 @@ public class PlaceholderConverter {
             if (unspecifiedPlayer instanceof CommandSender) {
                 // console
                 // replace general variables
-                msg = msg.replace("%d%", "Console").replace("%p%", "Console")
+                msg = msg.replace("%display_name%", "Console").replace("%player%", "Console")
+                        .replace("%tab_name%", "Console")
+                        .replace("%d%", "Console").replace("%p%", "Console")
                         .replace("%tab%", "Console");
                 // replace other player's name if possible
+                msg = msg.replace("%target%", unspecifiedOtherPlayersName != null
+                        ? unspecifiedOtherPlayersName
+                        : "UNKNOWN");
                 msg = msg.replace("%other%", unspecifiedOtherPlayersName != null
                         ? unspecifiedOtherPlayersName
                         : "UNKNOWN");

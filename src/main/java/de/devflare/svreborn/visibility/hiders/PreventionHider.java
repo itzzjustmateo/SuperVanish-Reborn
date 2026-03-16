@@ -26,10 +26,10 @@ public class PreventionHider extends PlayerHider implements Runnable {
         }
         if (plugin.isUseProtocolLib() && plugin.getVersionUtil().isOneDotXOrHigher(8)
                 && !plugin.getVersionUtil().isOneDotXOrHigher(19)
-                && plugin.getSettings().getBoolean("InvisibilityFeatures.ModifyTablistPackets", true))
+                && plugin.getSettings().getBoolean("invisibility_features.modify_tablist_packets", true))
             PlayerInfoModule.register(plugin, this);
         if (plugin.isUseProtocolLib()
-                && plugin.getSettings().getBoolean("InvisibilityFeatures.ModifyTabCompletePackets", true)
+                && plugin.getSettings().getBoolean("invisibility_features.modify_tab_complete_packets", true)
                 && !plugin.getVersionUtil().isOneDotXOrHigher(21)) {
             // Not supported anymore on 1.21 and above (ProtocolLib broken)
             TabCompleteModule.register(plugin, this);
@@ -39,8 +39,10 @@ public class PreventionHider extends PlayerHider implements Runnable {
     @Override
     public boolean setHidden(Player player, Player viewer, boolean hidden) {
         if (super.setHidden(player, viewer, hidden) || BukkitPlayerHidingUtil.isNewPlayerHidingAPISupported(plugin)) {
-            if (hidden) BukkitPlayerHidingUtil.hidePlayer(player, viewer, plugin);
-            else BukkitPlayerHidingUtil.showPlayer(player, viewer, plugin);
+            if (hidden)
+                BukkitPlayerHidingUtil.hidePlayer(player, viewer, plugin);
+            else
+                BukkitPlayerHidingUtil.showPlayer(player, viewer, plugin);
             return true;
         }
         return false;

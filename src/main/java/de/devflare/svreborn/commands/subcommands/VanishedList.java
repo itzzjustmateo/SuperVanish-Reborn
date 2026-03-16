@@ -31,7 +31,7 @@ public class VanishedList extends SubCommand {
     @Override
     public void execute(Command cmd, final CommandSender sender, final String[] args, String label) {
         if (canDo(sender, CommandAction.VANISHED_LIST, true)) {
-            String listMessage = plugin.getMessage("ListMessagePrefix");
+            String listMessage = plugin.getMessage("list_message_prefix");
             StringBuilder stringBuilder = new StringBuilder();
             List<UUID> allInvisiblePlayerUUIDs = ImmutableList.copyOf(getAllVanishedPlayers());
             if (allInvisiblePlayerUUIDs.isEmpty()) {
@@ -48,7 +48,7 @@ public class VanishedList extends SubCommand {
                     stringBuilder.append(ChatColor.GREEN).append(", ").append(ChatColor.WHITE);
                 }
             }
-            listMessage = listMessage.replace("%l", stringBuilder.toString());
+            listMessage = listMessage.replace("%list%", stringBuilder.toString());
             plugin.sendMessage(sender, listMessage, sender);
         }
     }

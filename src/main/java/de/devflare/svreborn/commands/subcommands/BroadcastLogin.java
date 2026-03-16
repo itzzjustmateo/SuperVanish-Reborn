@@ -27,7 +27,7 @@ public class BroadcastLogin extends SubCommand {
     public void execute(Command cmd, CommandSender p, String[] args, String label) {
         if (canDo(p, CommandAction.BROADCAST_LOGIN, true)) {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-                plugin.sendMessage(onlinePlayer, "ReappearMessage", p, onlinePlayer);
+                plugin.sendMessage(onlinePlayer, "reappear_message", p, onlinePlayer);
         }
     }
 }

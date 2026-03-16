@@ -42,7 +42,7 @@ public class ExceptionLogger {
             try {
                 plugin.log(loggingLevel, "Settings:");
                 plugin.log(loggingLevel, "  MsgsVersion: "
-                        + plugin.getMessages().getString("MessagesVersion"));
+                        + plugin.getMessages().getString("messages_version"));
                 StringBuilder settings = new StringBuilder("||");
                 for (String key : plugin.getSettings().getKeys(true)) {
                     if (!plugin.getSettings().getString(key).contains("MemorySection"))

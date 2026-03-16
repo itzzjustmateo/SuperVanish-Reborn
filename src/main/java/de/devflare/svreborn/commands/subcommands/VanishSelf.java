@@ -36,7 +36,7 @@ public class VanishSelf extends SubCommand {
                         || args[0].equalsIgnoreCase("reappear")
                         || args[0].equalsIgnoreCase("disable")) {
                     if (!isVanished(p.getUniqueId())) {
-                        plugin.sendMessage(p, "NotVanishedError", p);
+                        plugin.sendMessage(p, "not_vanished_error", p);
                         return;
                     }
                     showPlayer(p);
@@ -47,7 +47,7 @@ public class VanishSelf extends SubCommand {
                         plugin.getVisibilityChanger().hidePlayer(p, null, true);
                 } else {
                     if (isVanished(p.getUniqueId())) {
-                        plugin.sendMessage(p, "AlreadyVanishedError", p);
+                        plugin.sendMessage(p, "already_vanished_error", p);
                         return;
                     }
                     hidePlayer(p);

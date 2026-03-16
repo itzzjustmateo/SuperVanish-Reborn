@@ -38,11 +38,11 @@ public class PlayerBlockModifyListener implements Listener {
             if (!plugin.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId()))
                 return;
             if (e.getAction().equals(Action.PHYSICAL) && e.getClickedBlock() != null) {
-                if (!plugin.getSettings().getBoolean("InvisibilityFeatures.DisablePressurePlates"))
+                if (!plugin.getSettings().getBoolean("invisibility_features.disable_pressure_plates"))
                     return;
                 String material = e.getClickedBlock().getType().toString();
                 List<String> disallowedMaterials = Arrays.asList("STONE_PLATE", "GOLD_PLATE", "IRON_PLATE",
-                        "WOOD_PLATE"/* <- LEGACY*/, "TRIPWIRE", "PRESSURE_PLATE");
+                        "WOOD_PLATE"/* <- LEGACY */, "TRIPWIRE", "PRESSURE_PLATE");
                 for (String disallowedMaterial : disallowedMaterials)
                     if (material.equals(disallowedMaterial) || material.contains(disallowedMaterial)) {
                         e.setCancelled(true);
@@ -56,12 +56,12 @@ public class PlayerBlockModifyListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlace(BlockPlaceEvent e) {
         try {
-            if (plugin.getSettings().getBoolean("RestrictiveOptions.PreventBlockPlacing")) {
+            if (plugin.getSettings().getBoolean("restrictive_options.prevent_block_placing")) {
                 Player p = e.getPlayer();
                 Collection<UUID> vanishedPlayers = plugin.getVanishStateMgr().getOnlineVanishedPlayers();
                 if (vanishedPlayers.contains(p.getUniqueId()) && !p.hasPermission("sv.placeblocks")) {
                     e.setCancelled(true);
-                    plugin.sendMessage(e.getPlayer(), "BlockPlaceDenied", e.getPlayer());
+                    plugin.sendMessage(e.getPlayer(), "block_place_denied", e.getPlayer());
                 }
             }
         } catch (Exception er) {
@@ -72,11 +72,11 @@ public class PlayerBlockModifyListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onBreak(BlockBreakEvent e) {
         try {
-            if (plugin.getSettings().getBoolean("RestrictiveOptions.PreventBlockBreaking")) {
+            if (plugin.getSettings().getBoolean("restrictive_options.prevent_block_breaking")) {
                 Player p = e.getPlayer();
                 if (plugin.getVanishStateMgr().isVanished(p.getUniqueId()) && !p.hasPermission("sv.breakblocks")) {
                     e.setCancelled(true);
-                    plugin.sendMessage(e.getPlayer(), "BlockBreakDenied", e.getPlayer());
+                    plugin.sendMessage(e.getPlayer(), "block_break_denied", e.getPlayer());
                 }
             }
         } catch (Exception er) {

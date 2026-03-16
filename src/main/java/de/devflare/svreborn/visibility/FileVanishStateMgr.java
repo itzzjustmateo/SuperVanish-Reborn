@@ -39,7 +39,8 @@ public class FileVanishStateMgr extends VanishStateMgr {
     public void setVanishedState(final UUID uuid, String name, boolean hide, String causeName) {
         PlayerVanishStateChangeEvent event = new PlayerVanishStateChangeEvent(uuid, name, hide, causeName);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled())
+            return;
         List<String> vanishedPlayerUUIDStrings = plugin.getPlayerData().getStringList("InvisiblePlayers");
         if (hide)
             vanishedPlayerUUIDStrings.add(uuid.toString());
@@ -66,7 +67,8 @@ public class FileVanishStateMgr extends VanishStateMgr {
         return onlineVanishedPlayers;
     }
 
-    public UUID getVanishedUUIDFromNameOnFile(String name) {
+    @Override
+    public UUID getVanishedUUIDFromName(String name) {
         for (UUID uuid : getVanishedPlayersOnFile()) {
             if (plugin.getPlayerData().getString("PlayerData." + uuid + ".information.name")
                     .equalsIgnoreCase(name)) {

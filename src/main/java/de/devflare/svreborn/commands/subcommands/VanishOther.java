@@ -52,9 +52,9 @@ public class VanishOther extends SubCommand {
             }
             if (target == null) {
                 offline = true;
-                uuid = plugin.getVanishStateMgr().getVanishedUUIDFromNameOnFile(name);
+                uuid = plugin.getVanishStateMgr().getVanishedUUIDFromName(name);
                 if (uuid == null) {
-                    plugin.sendMessage(sender, "PlayerNonExistent", sender, name);
+                    plugin.sendMessage(sender, "player_non_existent", sender, name);
                     return;
                 }
             } else {
@@ -63,20 +63,20 @@ public class VanishOther extends SubCommand {
             }
             if (!offline && sender instanceof Player && sender != target
                     && target.hasPermission("sv.notoggle")) {
-                plugin.sendMessage(sender, "CannotHideOtherPlayer", sender, name);
+                plugin.sendMessage(sender, "cannot_hide_other_player", sender, name);
                 return;
             }
             if (plugin.getSettings().getBoolean(
-                    "IndicationFeatures.LayeredPermissions.HideInvisibleInCommands", false) && target != null
+                    "indication_features.layered_permissions.hide_invisible_in_commands", false) && target != null
                     && sender instanceof Player && !plugin.hasPermissionToSee((Player) sender, target)) {
-                plugin.sendMessage(sender, "PlayerNonExistent", sender, name);
+                plugin.sendMessage(sender, "player_non_existent", sender, name);
                 return;
             }
             if (hide && (offline ? isVanished(uuid) : isVanished(uuid))) {
-                plugin.sendMessage(sender, "AlreadyInvisibleMessage", sender, name);
+                plugin.sendMessage(sender, "already_invisible_message", sender, name);
                 return;
             } else if (!hide && !(offline ? isVanished(uuid) : isVanished(uuid))) {
-                plugin.sendMessage(sender, "AlreadyVisibleMessage", sender, name);
+                plugin.sendMessage(sender, "already_visible_message", sender, name);
                 return;
             }
             if (args.length == 3)
@@ -86,18 +86,18 @@ public class VanishOther extends SubCommand {
             if (!offline) {
                 if (hide) {
                     plugin.getVisibilityChanger().hidePlayer(target, sender.getName(), silent);
-                    plugin.sendMessage(sender, "HideOtherMessage", sender, name);
+                    plugin.sendMessage(sender, "hide_other_message", sender, name);
                 } else {
                     plugin.getVisibilityChanger().showPlayer(target, sender.getName());
-                    plugin.sendMessage(sender, "ShowOtherMessage", sender, name, silent);
+                    plugin.sendMessage(sender, "show_other_message", sender, name, silent);
                 }
             } else {
                 if (hide) {
                     plugin.getVanishStateMgr().setVanishedState(uuid, name, true, sender.getName());
-                    plugin.sendMessage(sender, "HideOtherMessage", sender, name);
+                    plugin.sendMessage(sender, "hide_other_message", sender, name);
                 } else {
                     plugin.getVanishStateMgr().setVanishedState(uuid, name, false, sender.getName());
-                    plugin.sendMessage(sender, "ShowOtherMessage", sender, name);
+                    plugin.sendMessage(sender, "show_other_message", sender, name);
                 }
             }
         }

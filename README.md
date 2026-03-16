@@ -10,6 +10,9 @@
 - Undetectable by other players and most plugins
 - Simple, reliable, and highly configurable
 - Modern codebase and updated for recent Minecraft versions (Java 21 support)
+- Modernized configuration system (`snake_case` keys)
+- Advanced text formatting using MiniMessage & Adventure API
+- Enhanced placeholder system with more descriptive names
 - Actively maintained fork with community-driven improvements
 
 ---
@@ -18,7 +21,7 @@
 
 ### Prerequisites
 
-- Minecraft server running Spigot, Paper, or CraftBukkit
+- Minecraft server running Paper, or Purpur
 - Java 21 or newer
 
 ### Installation
@@ -26,7 +29,8 @@
 1. Download the latest release from the [releases page](https://github.com/itzzjustmateo/SuperVanishReborn/releases) or build it yourself (see below).
 2. Place the `.jar` file in your server's `plugins/` directory.
 3. Restart your server.
-4. Configure via `plugins/SuperVanish-Reborn/config.yml` as needed.
+4. Configure via `plugins/SuperVanish-Reborn/config.yml` as needed. All keys are now in `snake_case` for better readability.
+5. Customize your messages in `messages.yml`, now supporting MiniMessage tags and modernized placeholders (e.g., `%player%`, `%target%`, `%display_name%`).
 
 ---
 

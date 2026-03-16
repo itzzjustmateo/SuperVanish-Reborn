@@ -64,7 +64,8 @@ public class UpdateNotifier {
 
     public boolean isUpToDate() {
         try {
-            if (latestVersion == null) throw new NumberFormatException();
+            if (latestVersion == null)
+                throw new NumberFormatException();
             int comparision = plugin.getVersionUtil().compareVersions(currentVersion, latestVersion);
             return comparision >= 0;
         } catch (NumberFormatException e) {
@@ -74,11 +75,13 @@ public class UpdateNotifier {
 
     private void notifyPlayer(Player p) {
         if (p.hasPermission("sv.notify") && latestVersion != null) {
-            if (notifiedPlayers.contains(p.getUniqueId())) return;
+            if (notifiedPlayers.contains(p.getUniqueId()))
+                return;
             notifiedPlayers.add(p.getUniqueId());
             plugin.sendMessage(p,
-                    plugin.getMessage("PluginOutdated").replace("%new%", latestVersion)
-                            .replace("%current%", currentVersion), p);
+                    plugin.getMessage("plugin_outdated").replace("%new_version%", latestVersion)
+                            .replace("%current_version%", currentVersion),
+                    p);
         }
     }
 
@@ -97,15 +100,16 @@ public class UpdateNotifier {
     }
 
     private BukkitTask start() {
-        if (checkTask != null) throw new IllegalStateException("Task is already running");
+        if (checkTask != null)
+            throw new IllegalStateException("Task is already running");
         return new BukkitRunnable() {
             @Override
             public void run() {
                 String latestVersion = fetchLatestVersion();
                 UpdateNotifier.this.latestVersion = latestVersion.equals("Error")
                         ? UpdateNotifier.this.latestVersion == null
-                        ? currentVersion
-                        : UpdateNotifier.this.latestVersion
+                                ? currentVersion
+                                : UpdateNotifier.this.latestVersion
                         : latestVersion;
                 if (!isUpToDate())
                     new BukkitRunnable() {
@@ -113,7 +117,8 @@ public class UpdateNotifier {
                         public void run() {
                             notifyConsole();
                             if (plugin.getSettings().getBoolean(
-                                    "MiscellaneousOptions.UpdateChecker.NotifyAdmins")) notifyAdmins();
+                                    "miscellaneous_options.update_checker.notify_admins"))
+                                notifyAdmins();
                         }
                     }.runTask(plugin);
             }
@@ -133,7 +138,8 @@ public class UpdateNotifier {
             con.disconnect();
             if (version.length() <= 7)
                 return version;
-            else throw new RuntimeException("'" + version + "' is not a valid version");
+            else
+                throw new RuntimeException("'" + version + "' is not a valid version");
         } catch (Exception e) {
             plugin.log(Level.WARNING, "Failed to check for an update: "
                     + e.getMessage());

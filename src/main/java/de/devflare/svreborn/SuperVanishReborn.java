@@ -13,6 +13,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import de.devflare.svreborn.api.VanishAPI;
 import de.devflare.svreborn.commands.VanishCommand;
 import de.devflare.svreborn.config.ConfigMgr;
+import de.devflare.svreborn.database.DatabaseConfig;
+import de.devflare.svreborn.database.DatabaseManager;
+import de.devflare.svreborn.database.DatabaseVanishStateMgr;
 import de.devflare.svreborn.features.FeatureMgr;
 import de.devflare.svreborn.hooks.PluginHookMgr;
 import de.devflare.svreborn.listeners.*;
@@ -21,6 +24,7 @@ import de.devflare.svreborn.utils.ExceptionLogger;
 import de.devflare.svreborn.utils.VersionUtil;
 import de.devflare.svreborn.visibility.ActionBarMgr;
 import de.devflare.svreborn.visibility.FileVanishStateMgr;
+import de.devflare.svreborn.visibility.VanishStateMgr;
 import de.devflare.svreborn.visibility.ServerListPacketListener;
 import de.devflare.svreborn.visibility.VisibilityChanger;
 import de.devflare.svreborn.visibility.hiders.PreventionHider;
@@ -60,7 +64,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
     @Getter
     private ActionBarMgr actionBarMgr;
     @Getter
-    private FileVanishStateMgr vanishStateMgr;
+    private VanishStateMgr vanishStateMgr;
     @Getter
     private VersionUtil versionUtil;
     @Getter
@@ -81,6 +85,8 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
     private LayeredPermissionChecker layeredPermissionChecker;
     @Getter
     private PluginHookMgr pluginHookMgr;
+    @Getter
+    private DatabaseManager databaseManager;
     private Set<VanishPlayer> vanishPlayers = new HashSet<>();
 
     @Override
@@ -97,8 +103,25 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
             layeredPermissionChecker = new LayeredPermissionChecker(this);
             command = new VanishCommand(this);
             versionUtil = new VersionUtil(this);
-            vanishStateMgr = new FileVanishStateMgr(this);
-            if (getSettings().getBoolean("MiscellaneousOptions.UpdateChecker.Enable", true))
+            // --- Vanish state manager: database or file ---
+            DatabaseConfig dbConfig = DatabaseConfig.fromConfig(getSettings());
+            if (dbConfig.enabled()) {
+                try {
+                    databaseManager = new DatabaseManager(this, dbConfig);
+                    databaseManager.connect();
+                    vanishStateMgr = new DatabaseVanishStateMgr(this, databaseManager, dbConfig);
+                    log(Level.INFO, "Database sync enabled (" + dbConfig.type()
+                            + " @ " + dbConfig.host() + ":" + dbConfig.port() + ").");
+                } catch (Exception e) {
+                    log(Level.SEVERE, "Failed to connect to the database — falling back to file-based state storage.");
+                    logException(e);
+                    databaseManager = null;
+                    vanishStateMgr = new FileVanishStateMgr(this);
+                }
+            } else {
+                vanishStateMgr = new FileVanishStateMgr(this);
+            }
+            if (getSettings().getBoolean("miscellaneous_options.update_checker.enable", true))
                 updateNotifier = new UpdateNotifier(this);
             visibilityChanger = new VisibilityChanger(new PreventionHider(this), this);
             if (versionUtil.isOneDotXOrHigher(8) && useProtocolLib)
@@ -126,6 +149,10 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         try {
             if (featureMgr != null)
                 featureMgr.disableFeatures();
+            if (vanishStateMgr instanceof DatabaseVanishStateMgr dbMgr)
+                dbMgr.shutdown();
+            if (databaseManager != null)
+                databaseManager.shutdown();
             vanishPlayers.clear();
             VanishAPI.setPlugin(null);
         } catch (Throwable e) {
@@ -141,7 +168,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             boolean itemPickUps = getPlayerData().getBoolean(
                     "PlayerData." + player.getUniqueId() + ".itemPickUps",
-                    getSettings().getBoolean("InvisibilityFeatures.DefaultPickUpItemsOption"));
+                    getSettings().getBoolean("invisibility_features.default_pick_up_items_option"));
             boolean vanished = vanishStateMgr.isVanished(player.getUniqueId());
             createVanishPlayer(player, itemPickUps);
             if (vanished) {
@@ -149,7 +176,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
                     if (!hasPermissionToSee(onlinePlayer, player))
                         visibilityChanger.getHider().setHidden(player, onlinePlayer, true);
             }
-            if (getSettings().getBoolean("MessageOptions.DisplayActionBar")
+            if (getSettings().getBoolean("message_options.display_action_bar")
                     && vanished && actionBarMgr != null) {
                 actionBarMgr.addActionBar(player);
             }
@@ -196,11 +223,11 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
     private EventPriority getEventPriority(Class<? extends Event> eventClass) {
         try {
             String eventName = eventClass.getSimpleName();
-            String configString = getSettings().getString("CompatibilityOptions." + eventName + "Priority");
+            String configString = getSettings().getString("compatibility_options." +
+                    VersionUtil.toSnakeCase(eventName).replace("player_", "") + "_event_priority");
             if (configString == null)
                 return EventPriority.NORMAL;
-            EventPriority priority = EventPriority.valueOf(configString);
-            return priority;
+            return EventPriority.valueOf(configString);
         } catch (Exception e) {
             logException(e);
             return EventPriority.NORMAL;
@@ -212,9 +239,9 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
     }
 
     public String getMessage(String path) {
-        String message = getMessages().getString("Messages." + path);
+        String message = getMessages().getString("messages." + path);
         if (message == null) {
-            message = configMgr.getMessagesFile().getDefaultConfig().getString("Messages." + path);
+            message = configMgr.getMessagesFile().getDefaultConfig().getString("messages." + path);
         }
         return message;
     }
@@ -228,7 +255,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         // ensure that there is always a vanish player
         boolean itemPickUps = getPlayerData().getBoolean(
                 "PlayerData." + player.getUniqueId() + ".itemPickUps",
-                getSettings().getBoolean("InvisibilityFeatures.DefaultPickUpItemsOption"));
+                getSettings().getBoolean("invisibility_features.default_pick_up_items_option"));
         final VanishPlayer vanishPlayer = new VanishPlayer(player, this, itemPickUps);
         vanishPlayers.add(vanishPlayer);
         return vanishPlayer;
@@ -245,13 +272,24 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
 
     public void sendMessage(CommandSender p, String messagesYmlPath, Object... additionalPlayerInfo) {
         String message;
-        if (!messagesYmlPath.contains(" ") && getMessage(messagesYmlPath) != null)
+        boolean hasPrefix = false;
+        if (!messagesYmlPath.contains(" ") && getMessage(messagesYmlPath) != null) {
             message = getMessage(messagesYmlPath);
-        else
+            hasPrefix = true;
+        } else {
             message = messagesYmlPath;
+        }
         if ("".equalsIgnoreCase(message) || "".equalsIgnoreCase(messagesYmlPath))
             return;
         message = replacePlaceholders(message, additionalPlayerInfo);
+
+        if (hasPrefix) {
+            String prefix = getMessages().getString("prefix", "");
+            if (prefix != null && !prefix.isEmpty()) {
+                message = prefix + message;
+            }
+        }
+
         p.sendMessage(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(message));
     }
 

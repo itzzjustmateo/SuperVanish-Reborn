@@ -32,9 +32,9 @@ public class WorldChangeListener implements Listener {
             if (!plugin.getVanishStateMgr().isVanished(p.getUniqueId()))
                 return;
             // check auto-reappear option
-            if (plugin.getSettings().getBoolean("VanishStateFeatures.ReappearOnWorldChange")
-                    || plugin.getSettings().getBoolean("VanishStateFeatures.CheckPermissionOnWorldChange")
-                    && !CommandAction.VANISH_SELF.checkPermission(p, plugin)) {
+            if (plugin.getSettings().getBoolean("vanish_state_features.reappear_on_world_change")
+                    || plugin.getSettings().getBoolean("vanish_state_features.check_permission_on_world_change")
+                            && !CommandAction.VANISH_SELF.checkPermission(p, plugin)) {
                 plugin.getVisibilityChanger().showPlayer(p);
             }
         } catch (Exception er) {

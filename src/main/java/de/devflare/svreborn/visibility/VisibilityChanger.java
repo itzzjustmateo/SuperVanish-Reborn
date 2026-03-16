@@ -66,7 +66,8 @@ public class VisibilityChanger {
             // call event
             PlayerHideEvent e = new PlayerHideEvent(player, silent);
             plugin.getServer().getPluginManager().callEvent(e);
-            if (e.isCancelled()) return;
+            if (e.isCancelled())
+                return;
             silent = e.isSilent();
             // state
             plugin.getVanishStateMgr().setVanishedState(player.getUniqueId(),
@@ -78,22 +79,22 @@ public class VisibilityChanger {
                 if (!plugin.hasPermissionToSee(onlinePlayer, player))
                     plugin.getVisibilityChanger().getHider().setHidden(player, onlinePlayer, true);
             // fly check
-            if (config.getBoolean("InvisibilityFeatures.Fly.Enable")) {
+            if (config.getBoolean("invisibility_features.fly.enable")) {
                 player.setAllowFlight(true);
             }
             // action bars
-            if (plugin.getActionBarMgr() != null && config.getBoolean("MessageOptions.DisplayActionBar")) {
+            if (plugin.getActionBarMgr() != null && config.getBoolean("message_options.display_action_bar")) {
                 plugin.getActionBarMgr().addActionBar(player);
             }
             // sleep state
             player.setSleepingIgnored(true);
             // chat message
             if (hiderName == null)
-                plugin.sendMessage(player, "OnVanish", player);
+                plugin.sendMessage(player, "on_vanish", player);
             else
-                plugin.sendMessage(player, "OnVanishCausedByOtherPlayer", player, hiderName);
+                plugin.sendMessage(player, "on_vanish_caused_by_other_player", player, hiderName);
             // stop player from being a mob target
-            if (config.getBoolean("InvisibilityFeatures.DisableMobTarget")) {
+            if (config.getBoolean("invisibility_features.disable_mob_target")) {
                 player.getWorld().getEntities().stream()
                         .filter(ent -> ent instanceof Creature)
                         .map(ent -> (Creature) ent)
@@ -120,7 +121,8 @@ public class VisibilityChanger {
             // call event
             PlayerShowEvent e = new PlayerShowEvent(player, silent);
             plugin.getServer().getPluginManager().callEvent(e);
-            if (e.isCancelled()) return;
+            if (e.isCancelled())
+                return;
             silent = e.isSilent();
             // metadata
             player.removeMetadata("vanished", plugin);
@@ -129,7 +131,7 @@ public class VisibilityChanger {
                 if (!plugin.hasPermissionToSee(onlinePlayer, player))
                     plugin.getVisibilityChanger().getHider().setHidden(player, onlinePlayer, false);
             // action bars
-            if (plugin.getActionBarMgr() != null && config.getBoolean("MessageOptions.DisplayActionBar")) {
+            if (plugin.getActionBarMgr() != null && config.getBoolean("message_options.display_action_bar")) {
                 plugin.getActionBarMgr().removeActionBar(player);
             }
             // sleep state
@@ -139,16 +141,16 @@ public class VisibilityChanger {
                     player.getName(), false, showerName);
             // chat message
             if (showerName == null)
-                plugin.sendMessage(player, "OnReappear", player);
+                plugin.sendMessage(player, "on_reappear", player);
             else
-                plugin.sendMessage(player, "OnReappearCausedByOtherPlayer", player, showerName);
+                plugin.sendMessage(player, "on_reappear_caused_by_other_player", player, showerName);
             // fly
             // remove fly if not spectator or creative and no perm
-            if (config.getBoolean("InvisibilityFeatures.Fly.DisableOnReappear")
+            if (config.getBoolean("invisibility_features.fly.disable_on_reappear")
                     && !player.hasPermission("sv.keepfly")
                     && (player.getGameMode() == GameMode.SURVIVAL
-                    || player.getGameMode() == GameMode.ADVENTURE)
-                    && config.getBoolean("InvisibilityFeatures.Fly.Enable")) {
+                            || player.getGameMode() == GameMode.ADVENTURE)
+                    && config.getBoolean("invisibility_features.fly.enable")) {
                 player.setAllowFlight(false);
             }
             // call post event

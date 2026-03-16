@@ -46,23 +46,23 @@ public class JoinListener implements EventExecutor, Listener {
                         if (!plugin.hasPermissionToSee(onlinePlayer, p))
                             plugin.getVisibilityChanger().getHider().setHidden(p, onlinePlayer, true);
                     // Join message
-                    if (plugin.getSettings().getBoolean("MessageOptions.HideRealJoinQuitMessages")) {
+                    if (plugin.getSettings().getBoolean("message_options.hide_real_join_quit_messages")) {
                         e.setJoinMessage(null);
                         Broadcast.announceSilentJoin(p, plugin);
                     }
                     // reminding message
-                    if (plugin.getSettings().getBoolean("MessageOptions.RemindVanishedOnJoin")) {
-                        plugin.sendMessage(p, "RemindingMessage", p);
+                    if (plugin.getSettings().getBoolean("message_options.remind_vanished_on_join")) {
+                        plugin.sendMessage(p, "reminding_message", p);
                     }
                     // re-add action bar
                     if (plugin.getActionBarMgr() != null && plugin.getSettings().getBoolean(
-                            "MessageOptions.DisplayActionBar")) {
+                            "message_options.display_action_bar")) {
                         plugin.getActionBarMgr().addActionBar(p);
                     }
                     // sleep state
                     p.setSleepingIgnored(true);
                     // adjust fly
-                    if (plugin.getSettings().getBoolean("InvisibilityFeatures.Fly.Enable")) {
+                    if (plugin.getSettings().getBoolean("invisibility_features.fly.enable")) {
                         p.setAllowFlight(true);
                     }
                     // metadata
@@ -76,16 +76,16 @@ public class JoinListener implements EventExecutor, Listener {
                 // recreate files msg
                 if ((p.hasPermission("sv.recreatecfg") || p.hasPermission("sv.recreatefiles"))
                         && (plugin.getConfigMgr().isSettingsUpdateRequired()
-                        || plugin.getConfigMgr().isMessagesUpdateRequired())) {
+                                || plugin.getConfigMgr().isMessagesUpdateRequired())) {
                     String currentVersion = plugin.getDescription().getVersion();
-                    boolean isDismissed =
-                            plugin.getPlayerData().getBoolean("PlayerData." + p.getUniqueId() + ".dismissed."
+                    boolean isDismissed = plugin.getPlayerData()
+                            .getBoolean("PlayerData." + p.getUniqueId() + ".dismissed."
                                     + currentVersion.replace(".", "_"), false);
                     if (!isDismissed)
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                plugin.sendMessage(p, "RecreationRequiredMsg", p);
+                                plugin.sendMessage(p, "recreation_required_msg", p);
                             }
                         }.runTaskLater(plugin, 1);
                 }

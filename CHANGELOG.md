@@ -5,7 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),  
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-06-XX
+## [Todo]
+
+### Added
+
+- **Added:** MySQL/MariaDB/PostgreSQL synchronization for real-time vanish state syncing across multiple servers via a shared database table (`sv_vanished_players`). Configure under the new `database:` section in `config.yml`. Disabled by default; falls back to file-based storage if the connection fails.
+- **Planned:** Native Velocity proxy support for better cross-server invisibility handling.
+- **Planned:** Modernized Developer API for better integration with 3rd-party plugins.
+- **Planned:** Customizable particle and sound effects using MiniMessage templates.
+- **Planned:** Persistent vanish states that survive server restarts and crashes.
+- **Planned:** New `/sv gui` for staff to manage vanish states and settings visually.
+- **Planned:** Integration with LuckPerms to hide vanished status in `/lp user info`.
+
+### Changed
+
+- _(Future)_ Refactor persistence layer for better reliability on large servers.
+
+### Fixed
+
+- _(Future)_ Minor edge cases in tab-completion visibility on 1.21.x.
+
+## [1.0.0] - 2026-02-??
 
 ### Added
 

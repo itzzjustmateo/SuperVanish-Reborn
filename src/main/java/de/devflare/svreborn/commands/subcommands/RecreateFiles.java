@@ -44,10 +44,10 @@ public class RecreateFiles extends SubCommand {
             if (args.length != 2) {
                 if (!plugin.getConfigMgr().isSettingsUpdateRequired()
                         && !plugin.getConfigMgr().isMessagesUpdateRequired()) {
-                    plugin.sendMessage(p, "NoConfigUpdateAvailable", p);
+                    plugin.sendMessage(p, "no_config_update_available", p);
                     return;
                 }
-                plugin.sendMessage(p, plugin.getMessage("UpdateWarning").replace("%changes%", changes)
+                plugin.sendMessage(p, plugin.getMessage("update_warning").replace("%changes%", changes)
                         .replace("%updates%", updates), p);
                 return;
             }
@@ -55,7 +55,7 @@ public class RecreateFiles extends SubCommand {
                 if (!plugin.getConfigMgr().isSettingsUpdateRequired()
                         && !plugin.getConfigMgr().isMessagesUpdateRequired()
                         && !args[1].equalsIgnoreCase("force")) {
-                    plugin.sendMessage(p, "NoConfigUpdateAvailable", p);
+                    plugin.sendMessage(p, "no_config_update_available", p);
                     return;
                 }
                 if (args[1].equalsIgnoreCase("force")) {
@@ -86,24 +86,24 @@ public class RecreateFiles extends SubCommand {
                             "Cannot update config, failed to delete file. Are the file permissions valid?");
                     return;
                 }
-                plugin.sendMessage(p, plugin.getMessage("RecreatedConfig")
+                plugin.sendMessage(p, plugin.getMessage("recreated_config")
                         .replace("%changes%", changes)
                         .replace("%updates%", updates), p);
                 // update update-information
                 plugin.getConfigMgr().checkFilesForLeftOvers();
             } else if (args[1].equalsIgnoreCase("dismiss")) {
                 String currentVersion = plugin.getDescription().getVersion();
-                boolean isDismissed =
-                        plugin.getPlayerData().getBoolean("PlayerData." + (p instanceof Player ? ((Player) p)
+                boolean isDismissed = plugin.getPlayerData()
+                        .getBoolean("PlayerData." + (p instanceof Player ? ((Player) p)
                                 .getUniqueId()
                                 .toString() : "CONSOLE") + ".dismissed." + currentVersion.replace(".", "_"), false);
                 plugin.getPlayerData().set("PlayerData." + (p instanceof Player ? ((Player) p).getUniqueId().toString()
                         : "CONSOLE") + ".dismissed." + currentVersion.replace(".", "_"), !isDismissed);
                 plugin.getConfigMgr().getPlayerDataFile().save();
                 if (!isDismissed)
-                    plugin.sendMessage(p, "DismissedRecreationWarning", p);
+                    plugin.sendMessage(p, "dismissed_recreation_warning", p);
                 else
-                    plugin.sendMessage(p, "UndismissedRecreationWarning", p);
+                    plugin.sendMessage(p, "undismissed_recreation_warning", p);
             }
         }
     }

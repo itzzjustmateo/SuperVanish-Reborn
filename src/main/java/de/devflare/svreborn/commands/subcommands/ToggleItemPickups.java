@@ -27,8 +27,8 @@ public class ToggleItemPickups extends SubCommand {
     public void execute(Command cmd, CommandSender sender, String[] args, String label) {
         if (canDo(sender, CommandAction.TOGGLE_ITEM_PICKUPS, true)) {
             Player p = (Player) sender;
-            plugin.sendMessage(p, plugin.getMessage("ToggledPickingUpItems"
-                    + (toggleState(plugin.getVanishPlayer(p)) ? "On" : "Off")), p);
+            plugin.sendMessage(p, plugin.getMessage("toggled_picking_up_items_"
+                    + (toggleState(plugin.getVanishPlayer(p)) ? "on" : "off")), p);
         }
     }
 

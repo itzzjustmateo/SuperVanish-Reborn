@@ -16,7 +16,6 @@ import lombok.Setter;
 import java.util.Objects;
 import java.util.UUID;
 
-
 /**
  * Holds additional information about players in the context of vanishing
  */
@@ -34,7 +33,8 @@ public class VanishPlayer {
         this.plugin = plugin;
         this.playerUUID = player.getUniqueId();
         this.itemPickUps = itemPickUps;
-        if (plugin.getSettings().getBoolean("IndicationFeatures.LayeredPermissions.LayeredSeeAndUsePermissions", false)) {
+        if (plugin.getSettings().getBoolean("indication_features.layered_permissions.layered_see_and_use_permissions",
+                false)) {
             seePermissionLevel = plugin.getLayeredPermissionLevel(player, "see");
             usePermissionLevel = plugin.getLayeredPermissionLevel(player, "use");
         }
@@ -50,8 +50,10 @@ public class VanishPlayer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         VanishPlayer that = (VanishPlayer) o;
         return Objects.equals(playerUUID, that.playerUUID);
     }
