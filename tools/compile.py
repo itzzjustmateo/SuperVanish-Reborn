@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
 """Build the SuperVanish Reborn plugin using the Gradle wrapper.
 
 Usage:
-    python3 tools/compile.py          # Build the shadow jar (default)
-    python3 tools/compile.py --clean  # Clean then build
-    python3 tools/compile.py --test   # Run tests
-    python3 tools/compile.py --jar    # Just produce the jar
+    uv run tools/compile.py              # Build the shadow jar (default)
+    uv run tools/compile.py --clean      # Clean then build
+    uv run tools/compile.py --test       # Run tests
+    uv run tools/compile.py --jar        # Just produce the jar
 """
 
 import argparse

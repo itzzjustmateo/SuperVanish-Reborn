@@ -19,6 +19,7 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: temurin
           cache: gradle
+      - uses: astral-sh/setup-uv@v5
       - run: ./gradlew build --no-daemon
       - uses: actions/upload-artifact@v4
         with:

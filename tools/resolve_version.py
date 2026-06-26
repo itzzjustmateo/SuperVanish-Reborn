@@ -1,8 +1,12 @@
+#!/usr/bin/env -S uv run
 """Resolve the next release version.
 
 Reads the current version from build.gradle.kts, checks existing Git tags,
 and auto-increments the patch version if the current version already exists
 as a tag.
+
+Usage:
+    uv run python3 tools/resolve_version.py
 """
 
 import re

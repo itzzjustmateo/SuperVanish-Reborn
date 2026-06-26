@@ -1,14 +1,19 @@
+#!/usr/bin/env -S uv run
 """Generate a changelog between the last release tag and HEAD.
 
 Outputs Markdown suitable for a GitHub release body.
+
+Usage:
+    uv run python3 tools/generate_changelog.py
 """
 
 import subprocess
 import sys
+from collections.abc import Sequence
 from collections import defaultdict
 
 
-def run(cmd: list[str]) -> str:
+def run(cmd: Sequence[str]) -> str:
     result = subprocess.run(cmd, capture_output=True, text=True, check=True)
     return result.stdout.strip()
 
@@ -20,7 +25,6 @@ def get_last_tag() -> str | None:
     )
     tags = result.stdout.strip().splitlines()
     if tags:
-        # skip the first tag if it matches HEAD (current release)
         head_ref = run(["git", "rev-parse", "HEAD"])
         for t in tags:
             tag_ref = run(["git", "rev-list", "-n", "1", t])
@@ -49,7 +53,6 @@ def get_commits_since(tag: str | None) -> list[dict]:
 
 
 def get_new_contributors(commits: list[dict]) -> set[str]:
-    """Crude heuristic: check if the author has authored previous commits."""
     all_authors = set()
     result = subprocess.run(
         ["git", "log", "--all", "--pretty=format:%an"],
@@ -63,13 +66,13 @@ def get_new_contributors(commits: list[dict]) -> set[str]:
 
 def categorize(message: str) -> str:
     msg_lower = message.lower()
-    if msg_lower.startswith("feat") or msg_lower.startswith("feature"):
+    if msg_lower.startswith(("feat", "feature")):
         return "Features"
     if msg_lower.startswith("fix"):
         return "Bug Fixes"
-    if msg_lower.startswith("chore") or msg_lower.startswith("build"):
+    if msg_lower.startswith(("chore", "build")):
         return "Chores"
-    if msg_lower.startswith("docs") or msg_lower.startswith("doc"):
+    if msg_lower.startswith(("docs", "doc")):
         return "Documentation"
     if msg_lower.startswith("refactor"):
         return "Refactoring"

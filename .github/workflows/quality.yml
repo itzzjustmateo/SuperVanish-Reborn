@@ -16,6 +16,7 @@ jobs:
           java-version: 21
           distribution: temurin
           cache: gradle
+      - uses: astral-sh/setup-uv@v5
       - name: Check formatting
         run: ./gradlew spotlessCheck --no-daemon || echo "spotless not configured yet"
       - name: Build with warnings

@@ -21,5 +21,6 @@ jobs:
           java-version: 21
           distribution: temurin
           cache: gradle
+      - uses: astral-sh/setup-uv@v5
       - name: Check dependency updates
         uses: gradle/actions/dependency-submission@v4

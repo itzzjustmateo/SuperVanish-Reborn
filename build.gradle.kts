@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version("9.0.0-beta4")
+    id("com.gradleup.shadow") version("9.4.3")
     id("maven-publish")
 }
 
@@ -8,9 +8,8 @@ group = "de.devflare"
 version = "1.0.0"
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    sourceCompatibility = JavaVersion.toVersion("26")
+    targetCompatibility = JavaVersion.toVersion("26")
 }
 
 repositories {
@@ -29,11 +28,11 @@ repositories {
 
 dependencies {
     // Paper API
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.72-stable")
 
     // Lombok (to be removed in future)
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
 
     // Plugin hooks (provided at runtime)
     compileOnly("net.essentialsx:EssentialsX:2.21.2") {
