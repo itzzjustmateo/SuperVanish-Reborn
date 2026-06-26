@@ -1,6 +1,6 @@
-# SuperVanishReborn
+# SuperVanish Reborn
 
-**SuperVanishReborn** is a maintained fork of [SuperVanish](https://www.spigotmc.org/resources/supervanish-be-invisible.1331/), a popular Bukkit plugin for Spigot/CraftBukkit Minecraft servers. This plugin allows server admins to become completely invisible and undetectable to regular players, greatly assisting with administrative work and moderation.
+**SuperVanish Reborn** is an updated and maintained fork of [SuperVanish](https://www.spigotmc.org/resources/supervanish-be-invisible.1331/), a popular Bukkit plugin for Paper Minecraft servers. This plugin allows server admins to become completely invisible and undetectable to regular players, greatly assisting with administrative work and moderation. This fork adds many improvements, modernizations, and fixes on top of the original.
 
 ---
 
@@ -34,9 +34,9 @@
 
 ---
 
-## Building from Source (Maven)
+## Building from Source
 
-To include **SuperVanishReborn** in your Maven project:
+### Maven
 
 ```xml
 <repositories>
@@ -68,6 +68,22 @@ Pull requests are welcome! Please keep them as small, self-contained, and well-t
 ## Credits
 
 Original SuperVanish by [LeonMangler](https://www.spigotmc.org/resources/supervanish-be-invisible.1331/).  
-SuperVanishReborn maintained by [DevFlare](https://www.devflare.de) and the open-source community.
+SuperVanish Reborn is a community-driven fork maintained by [DevFlare](https://www.devflare.de) and contributors. This project builds upon the original work with modernizations, bug fixes, and new features.
+
+---
+
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md) for planned improvements and fixes.
+
+---
+
+## License
+
+This project is licensed under the **Apache License, Version 2.0**.  
+The original SuperVanish code by Leon Mangler is licensed under the **MIT License**.  
+See [LICENSE](./LICENSE) for full details.
+
+---
 
 Enjoy vanishing!
