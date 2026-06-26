@@ -7,9 +7,17 @@ plugins {
 group = "de.devflare"
 version = "1.0.0"
 
-java {
-    sourceCompatibility = JavaVersion.toVersion("26")
-    targetCompatibility = JavaVersion.toVersion("26")
+tasks.withType<JavaCompile> {
+    options.release = 21
+}
+
+configurations.all {
+    resolutionStrategy.capabilitiesResolution.withCapability("org.bukkit:bukkit") {
+        selectHighestVersion()
+    }
+    resolutionStrategy.capabilitiesResolution.withCapability("org.spigotmc:spigot-api") {
+        selectHighestVersion()
+    }
 }
 
 repositories {
@@ -28,7 +36,7 @@ repositories {
 
 dependencies {
     // Paper API
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.72-stable")
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 
     // Lombok (to be removed in future)
     compileOnly("org.projectlombok:lombok:1.18.46")

@@ -4,7 +4,7 @@
 Outputs Markdown suitable for a GitHub release body.
 
 Usage:
-    uv run python3 tools/generate_changelog.py
+    uv run python3 tools/generate_changelog.py [version]
 """
 
 import subprocess
@@ -52,14 +52,15 @@ def get_commits_since(tag: str | None) -> list[dict]:
     return commits
 
 
-def get_new_contributors(commits: list[dict]) -> set[str]:
+def get_new_contributors(commits: list[dict], last_tag: str | None) -> set[str]:
     all_authors = set()
-    result = subprocess.run(
-        ["git", "log", "--all", "--pretty=format:%an"],
-        capture_output=True, text=True, check=False,
-    )
-    for line in result.stdout.strip().splitlines():
-        all_authors.add(line)
+    if last_tag:
+        result = subprocess.run(
+            ["git", "log", last_tag, "--pretty=format:%an"],
+            capture_output=True, text=True, check=False,
+        )
+        for line in result.stdout.strip().splitlines():
+            all_authors.add(line)
     current_authors = {c["author"] for c in commits}
     return current_authors - all_authors if all_authors else set()
 
@@ -86,6 +87,7 @@ def categorize(message: str) -> str:
 
 
 def main():
+    version = sys.argv[1] if len(sys.argv) > 1 else None
     last_tag = get_last_tag()
     if last_tag:
         print(f"## Changes since {last_tag}\n")
@@ -98,7 +100,7 @@ def main():
         print("No new commits.")
         return
 
-    new_contributors = get_new_contributors(commits)
+    new_contributors = get_new_contributors(commits, last_tag)
 
     categories: dict[str, list[str]] = defaultdict(list)
     for c in commits:
@@ -120,9 +122,12 @@ def main():
         print(f"Welcome to {names}!")
         print()
 
-    commit_count = len(commits)
-    print(f"**Full Changelog**: https://github.com/itzzjustmateo/SuperVanish-Reborn/compare/"
-          f"{last_tag or 'initial'}...vTODO")
+    if version and last_tag:
+        print(f"**Full Changelog**: https://github.com/itzzjustmateo/SuperVanish-Reborn/compare/"
+              f"{last_tag}...v{version}")
+    elif last_tag:
+        print(f"**Full Changelog**: https://github.com/itzzjustmateo/SuperVanish-Reborn/compare/"
+              f"{last_tag}...HEAD")
 
 
 if __name__ == "__main__":

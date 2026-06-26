@@ -19,6 +19,7 @@ package de.devflare.svreborn.hooks;
 import com.griefprevention.events.BoundaryVisualizationEvent;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -34,7 +35,9 @@ public class GriefPreventionHook extends PluginHook {
     public void onBoundaryVisualization(BoundaryVisualizationEvent event) {
         Player player = event.getPlayer();
         if (superVanish.getVanishStateMgr().isVanished(player.getUniqueId())) {
-            event.setProvider(null);
+            if (event instanceof Cancellable) {
+                ((Cancellable) event).setCancelled(true);
+            }
         }
     }
 }

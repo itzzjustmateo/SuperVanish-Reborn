@@ -3,7 +3,7 @@ main: de.devflare.svreborn.SuperVanishReborn
 author: ItzzMateo
 description: A fork of the popular SuperVanish plugin
 version: ${project.version}
-api-version: 1.26
+api-version: 1.21
 website: https://supervanish.devflare.de
 softdepend:
 - ProtocolLib

@@ -15,11 +15,15 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-GRADLEW = REPO_ROOT / "gradlew"
+
+
+def _gradlew() -> Path:
+    name = "gradlew.bat" if sys.platform == "win32" else "gradlew"
+    return REPO_ROOT / name
 
 
 def run_gradle(*args: str) -> int:
-    cmd = [str(GRADLEW), *args]
+    cmd = [str(_gradlew()), *args]
     print(f"> {' '.join(cmd)}", file=sys.stderr)
     result = subprocess.run(cmd, cwd=REPO_ROOT)
     return result.returncode
@@ -28,9 +32,10 @@ def run_gradle(*args: str) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build SuperVanish Reborn")
     parser.add_argument("--clean", action="store_true", help="Clean before building")
-    parser.add_argument("--test", action="store_true", help="Run tests")
-    parser.add_argument("--jar", action="store_true",
-                        help="Only produce the shadow jar (no tests)")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--test", action="store_true", help="Run tests")
+    group.add_argument("--jar", action="store_true",
+                       help="Only produce the shadow jar (no tests)")
     args = parser.parse_args()
 
     tasks = []

@@ -36,26 +36,13 @@
 
 ## Building from Source
 
-### Maven
+Build the project using the Gradle wrapper:
 
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
-<dependencies>
-    <dependency>
-        <groupId>com.github.YOUR-GITHUB-USERNAME</groupId>
-        <artifactId>SuperVanishReborn</artifactId>
-        <version>LATEST_VERSION</version>
-    </dependency>
-</dependencies>
+```bash
+./gradlew build
 ```
 
-Replace `YOUR-GITHUB-USERNAME` and `LATEST_VERSION` with the appropriate values if using JitPack to build directly from this fork.
+The compiled JAR will be placed in `build/libs/`.
 
 ---
 
@@ -81,7 +68,7 @@ See [ROADMAP.md](./ROADMAP.md) for planned improvements and fixes.
 ## License
 
 This project is licensed under the **Apache License, Version 2.0**.  
-The original SuperVanish code by Leon Mangler is licensed under the **MIT License**.  
+The original SuperVanish code by Leon Mangler is licensed under the **Mozilla Public License, Version 2.0**.  
 See [LICENSE](./LICENSE) for full details.
 
 ---

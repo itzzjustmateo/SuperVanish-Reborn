@@ -18,25 +18,26 @@ import org.bukkit.plugin.Plugin;
 
 import de.devflare.svreborn.SuperVanishReborn;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import static java.util.Map.entry;
+
 public class PluginHookMgr implements Listener {
 
     private static final Map<String, Class<? extends PluginHook>> REGISTERED_HOOKS
-            = new HashMap<>() {{
-        put("Essentials", EssentialsHook.class);
-        put("Citizens", CitizensHook.class);
-        put("PlaceholderAPI", PlaceholderAPIHook.class);
-        put("dynmap", DynmapHook.class);
-        put("TrailGUI", TrailGUIHook.class);
-        put("MVdWPlaceholderAPI", MVdWPlaceholderAPIHook.class);
-        put("OpenInv", OpenInvHook.class);
-        put("GriefPrevention", GriefPreventionHook.class);
-    }};
+            = Map.ofEntries(
+            entry("Essentials", EssentialsHook.class),
+            entry("Citizens", CitizensHook.class),
+            entry("PlaceholderAPI", PlaceholderAPIHook.class),
+            entry("dynmap", DynmapHook.class),
+            entry("TrailGUI", TrailGUIHook.class),
+            entry("MVdWPlaceholderAPI", MVdWPlaceholderAPIHook.class),
+            entry("OpenInv", OpenInvHook.class),
+            entry("GriefPrevention", GriefPreventionHook.class)
+    );
     private final SuperVanishReborn plugin;
     private final Set<PluginHook> activeHooks = new HashSet<>();
 
@@ -88,9 +89,21 @@ public class PluginHookMgr implements Listener {
         }
     }
 
+    private static final Map<String, String> HOOK_CONFIG_KEYS = Map.ofEntries(
+            entry("Essentials", "enable_essentials"),
+            entry("dynmap", "enable_dynmap"),
+            entry("TrailGUI", "enable_trail_gui"),
+            entry("PlaceholderAPI", "enable_placeholder_api"),
+            entry("MVdWPlaceholderAPI", "enable_mvdw_placeholder_api"),
+            entry("Citizens", "enable_citizens"),
+            entry("OpenInv", "enable_open_inv"),
+            entry("GriefPrevention", "enable_grief_prevention")
+    );
+
     private boolean isHookDisabled(String pluginName) {
         FileConfiguration config = plugin.getSettings();
-        String configKey = "hook_options.enable_" + pluginName.toLowerCase();
+        String configKey = "hook_options." + HOOK_CONFIG_KEYS.getOrDefault(pluginName,
+                "enable_" + pluginName.toLowerCase());
         if (pluginName.equalsIgnoreCase("GriefPrevention")) {
             return !config.getBoolean(configKey, false);
         }

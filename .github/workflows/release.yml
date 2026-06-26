@@ -5,6 +5,10 @@ on:
     tags:
       - "release"
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: read
@@ -39,7 +43,7 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
-          uv run python3 tools/generate_changelog.py > CHANGELOG_TEMP.md
+          uv run python3 tools/generate_changelog.py ${{ steps.version.outputs.version }} > CHANGELOG_TEMP.md
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           cat CHANGELOG_TEMP.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -51,6 +55,8 @@ jobs:
           git add build.gradle.kts src/main/resources/plugin.yml
           git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
           git tag v${{ steps.version.outputs.version }}
+          git push origin main
+          git push origin v${{ steps.version.outputs.version }}
 
       - name: Build
         run: ./gradlew build --no-daemon

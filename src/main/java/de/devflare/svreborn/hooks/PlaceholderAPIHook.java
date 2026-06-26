@@ -83,8 +83,11 @@ public class PlaceholderAPIHook extends PluginHook {
                             ? suffix : "";
 
                 if (lower.equals("can_see") && p != null) {
-                    return superVanish.getLayeredPermissionChecker()
-                            .hasPermissionToSee(p, p) ? yes : no;
+                    boolean canSee = superVanish.getSettings()
+                            .getBoolean("IndicationFeatures.LayeredPermissions.EnableSeePermission", true)
+                            && superVanish.getLayeredPermissionChecker()
+                                    .getLayeredPermissionLevel(p, "see") > 0;
+                    return canSee ? yes : no;
                 }
 
                 if (lower.startsWith("is_vanished_") && p != null) {
@@ -120,7 +123,7 @@ public class PlaceholderAPIHook extends PluginHook {
                         if (onlineVanished == null) continue;
                         if (superVanish.getSettings().getBoolean(
                                 "IndicationFeatures.LayeredPermissions.HideInvisibleInCommands", false)
-                                && !superVanish.hasPermissionToSee(p, onlineVanished)) {
+                                && p != null && !superVanish.hasPermissionToSee(p, onlineVanished)) {
                             continue;
                         }
                         if (!playerList.isEmpty()) playerList.append(", ");

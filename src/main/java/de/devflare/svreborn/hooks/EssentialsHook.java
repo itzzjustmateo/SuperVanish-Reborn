@@ -100,7 +100,7 @@ public class EssentialsHook extends PluginHook {
         if (!CommandAction.VANISH_SELF.checkPermission(e.getPlayer(), superVanish)) return;
         if (superVanish.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId())) return;
         String command = e.getMessage().toLowerCase(Locale.ENGLISH).split(" ")[0]
-                .replace("/", "").toLowerCase(Locale.ENGLISH);
+                .replace("/", "");
         if (command.contains(":")) command = command.split(":")[1];
         if (!command.equals("supervanish") && !command.equals("sv")
                 && !command.equals("v") && !command.equals("vanish")) return;

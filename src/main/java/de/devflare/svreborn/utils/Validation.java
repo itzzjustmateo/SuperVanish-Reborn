@@ -22,20 +22,32 @@ import java.util.logging.Level;
 
 public abstract class Validation {
 
+    private static final boolean BUKKIT_AVAILABLE;
+
+    static {
+        boolean found = false;
+        try {
+            Class.forName("org.bukkit.plugin.java.JavaPlugin");
+            found = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+        BUKKIT_AVAILABLE = found;
+    }
+
     public static void checkNotNull(Object... objects) {
-        checkNotNull(null, objects);
+        checkNotNull("Validation failed", objects);
     }
 
     public static void checkIsTrue(boolean... bool) {
-        checkIsTrue(null, bool);
+        checkIsTrue("Validation failed", bool);
     }
 
     public static void checkNotNull(String message, Object... objects) {
         for (Object obj : objects) {
             if (obj == null) {
-                if (message != null)
-                    log(Level.SEVERE, message);
-                throw new IllegalArgumentException(message == null ? "" : message);
+                String msg = message == null ? "Validation failed" : message;
+                log(Level.SEVERE, msg);
+                throw new IllegalArgumentException(msg);
             }
         }
     }
@@ -44,19 +56,18 @@ public abstract class Validation {
     public static void checkIsTrue(String message, boolean... booleans) {
         for (boolean bool : booleans) {
             if (!bool) {
-                if (message != null)
-                    log(Level.SEVERE, message);
-                throw new IllegalArgumentException(message == null ? "" : message);
+                String msg = message == null ? "Validation failed" : message;
+                log(Level.SEVERE, msg);
+                throw new IllegalArgumentException(msg);
             }
         }
     }
 
     private static void log(Level level, String message) {
-        try {
-            Class.forName("org.bukkit.plugin.java.JavaPlugin");
+        if (BUKKIT_AVAILABLE) {
             Bukkit.getLogger().log(level, message);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } else {
+            System.err.println(level + ": " + message);
         }
     }
 }

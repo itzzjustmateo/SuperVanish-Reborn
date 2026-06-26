@@ -101,6 +101,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
             configMgr.prepareFiles();
             placeholderConverter = new PlaceholderConverter(this);
             layeredPermissionChecker = new LayeredPermissionChecker(this);
+            layeredPermissionChecker.init();
             command = new VanishCommand(this);
             versionUtil = new VersionUtil(this);
             // --- Vanish state manager: database or file ---

@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -18,6 +21,6 @@ jobs:
           cache: gradle
       - uses: astral-sh/setup-uv@v5
       - name: Check formatting
-        run: ./gradlew spotlessCheck --no-daemon || echo "spotless not configured yet"
+        run: ./gradlew spotlessCheck --no-daemon
       - name: Build with warnings
-        run: ./gradlew build -Werror --no-daemon || echo "Werror not yet enforced"
+        run: ./gradlew build -Werror --no-daemon
