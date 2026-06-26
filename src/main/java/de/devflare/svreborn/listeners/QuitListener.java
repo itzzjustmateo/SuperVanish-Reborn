@@ -48,11 +48,11 @@ public class QuitListener implements EventExecutor, Listener {
                                     && !CommandAction.VANISH_SELF.checkPermission(p, plugin)) {
                         plugin.getVanishStateMgr().setVanishedState(p.getUniqueId(), p.getName(), false, null);
                         // check if it should handle the quit msg
-                        if (!config.getBoolean("message_options.reappear_on_quit_hide_leave_msg"))
+                        if (!config.getBoolean("message_options.reappear_on_quit_hide_leave"))
                             noMsg = true;
                     }
                     // check remove-quit-msg option
-                    if (!noMsg && config.getBoolean("message_options.hide_real_join_quit_messages")) {
+                    if (!noMsg && config.getBoolean("message_options.hide_real_join_quit")) {
                         e.setQuitMessage(null);
                         Broadcast.announceSilentQuit(p, plugin);
                     }

@@ -90,7 +90,7 @@ public class PluginHookMgr implements Listener {
 
     private boolean isHookDisabled(String pluginName) {
         FileConfiguration config = plugin.getSettings();
-        String configKey = "hook_options.enable_" + pluginName.toLowerCase() + "_hook";
+        String configKey = "hook_options.enable_" + pluginName.toLowerCase();
         if (pluginName.equalsIgnoreCase("GriefPrevention")) {
             return !config.getBoolean(configKey, false);
         }

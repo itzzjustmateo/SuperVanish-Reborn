@@ -63,28 +63,28 @@ public class Broadcast extends Feature {
 
     @Override
     public boolean isActive() {
-        return plugin.getSettings().getBoolean("message_options.fake_join_quit_messages.broadcast_fake_quit_on_vanish")
-                || plugin.getSettings().getBoolean("message_options.fake_join_quit_messages" +
+        return plugin.getSettings().getBoolean("message_options.fake_join_quit.broadcast_fake_quit_on_vanish")
+                || plugin.getSettings().getBoolean("message_options.fake_join_quit" +
                         ".broadcast_fake_join_on_reappear");
     }
 
     @EventHandler
     public void onVanish(PostPlayerHideEvent e) {
         final Player p = e.getPlayer();
-        if (plugin.getSettings().getBoolean("MessageOptions.FakeJoinQuitMessages.BroadcastFakeQuitOnVanish")
+        if (plugin.getSettings().getBoolean("message_options.fake_join_quit.broadcast_fake_quit_on_vanish")
                 && !e.isSilent()) {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!plugin.canSee(onlinePlayer, p)) {
                     if (!plugin.getSettings().getBoolean(
-                            "MessageOptions.FakeJoinQuitMessages.SendMessageOnlyToAdmins"))
+                            "message_options.fake_join_quit.admins_only"))
                         plugin.sendMessage(onlinePlayer, "VanishMessage", p, onlinePlayer);
                 } else if (!plugin.getSettings().getBoolean(
-                        "MessageOptions.FakeJoinQuitMessages.SendMessageOnlyToUsers"))
+                        "message_options.fake_join_quit.users_only"))
                     if (!plugin.getSettings().getBoolean(
-                            "MessageOptions.FakeJoinQuitMessages.AnnounceVanishReappearToAdmins"))
+                            "message_options.fake_join_quit.announce_to_admins"))
                         plugin.sendMessage(onlinePlayer, "VanishMessage", p, onlinePlayer);
                     else if (onlinePlayer == p && !plugin.getSettings().getBoolean(
-                            "MessageOptions.FakeJoinQuitMessages.SendMessageOnlyToAdmins"))
+                            "message_options.fake_join_quit.admins_only"))
                         plugin.sendMessage(onlinePlayer, "VanishMessage", p, onlinePlayer);
                     else if (onlinePlayer != p)
                         plugin.sendMessage(onlinePlayer, "VanishMessageWithPermission", p, onlinePlayer);
@@ -96,19 +96,19 @@ public class Broadcast extends Feature {
     public void onReappear(PlayerShowEvent e) {
         Player p = e.getPlayer();
         if (plugin.getSettings().getBoolean(
-                "message_options.fake_join_quit_messages.broadcast_fake_join_on_reappear") && !e.isSilent()) {
+                "message_options.fake_join_quit.broadcast_fake_join_on_reappear") && !e.isSilent()) {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!plugin.canSee(onlinePlayer, p)) {
                     if (!plugin.getSettings().getBoolean(
-                            "message_options.fake_join_quit_messages.send_message_only_to_admins"))
+                            "message_options.fake_join_quit.admins_only"))
                         plugin.sendMessage(onlinePlayer, "reappear_message", p, onlinePlayer);
                 } else if (!plugin.getSettings().getBoolean(
-                        "message_options.fake_join_quit_messages.send_message_only_to_users"))
+                        "message_options.fake_join_quit.users_only"))
                     if (!plugin.getSettings().getBoolean(
-                            "message_options.fake_join_quit_messages.announce_vanish_reappear_to_admins"))
+                            "message_options.fake_join_quit.announce_to_admins"))
                         plugin.sendMessage(onlinePlayer, "reappear_message_with_permission", p, onlinePlayer);
                     else if (onlinePlayer == p && !plugin.getSettings().getBoolean(
-                            "message_options.fake_join_quit_messages.send_message_only_to_admins"))
+                            "message_options.fake_join_quit.admins_only"))
                         plugin.sendMessage(onlinePlayer, "reappear_message", p, onlinePlayer);
                     else if (onlinePlayer != p)
                         plugin.sendMessage(onlinePlayer, "reappear_message_with_permission", p, onlinePlayer);
