@@ -9,6 +9,7 @@
 package de.devflare.svreborn.hooks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -26,7 +27,7 @@ import java.util.logging.Level;
 public class PluginHookMgr implements Listener {
 
     private static final Map<String, Class<? extends PluginHook>> REGISTERED_HOOKS
-            = new HashMap<String, Class<? extends PluginHook>>() {{
+            = new HashMap<>() {{
         put("Essentials", EssentialsHook.class);
         put("Citizens", CitizensHook.class);
         put("PlaceholderAPI", PlaceholderAPIHook.class);
@@ -34,9 +35,10 @@ public class PluginHookMgr implements Listener {
         put("TrailGUI", TrailGUIHook.class);
         put("MVdWPlaceholderAPI", MVdWPlaceholderAPIHook.class);
         put("OpenInv", OpenInvHook.class);
+        put("GriefPrevention", GriefPreventionHook.class);
     }};
     private final SuperVanishReborn plugin;
-    private Set<PluginHook> activeHooks = new HashSet<>();
+    private final Set<PluginHook> activeHooks = new HashSet<>();
 
     public PluginHookMgr(SuperVanishReborn plugin) {
         this.plugin = plugin;
@@ -49,12 +51,13 @@ public class PluginHookMgr implements Listener {
     @EventHandler
     public void onPluginEnable(PluginEnableEvent e) {
         Plugin plugin = e.getPlugin();
-        if (REGISTERED_HOOKS.get(plugin.getName()) == null) return;
+        if (!REGISTERED_HOOKS.containsKey(plugin.getName())) return;
         if (isHookDisabled(plugin.getName())) return;
         PluginHook hook = null;
         try {
-            hook = REGISTERED_HOOKS.get(plugin.getName()).getConstructor(SuperVanishReborn.class).
-                    newInstance(PluginHookMgr.this.plugin);
+            hook = REGISTERED_HOOKS.get(plugin.getName())
+                    .getConstructor(SuperVanishReborn.class)
+                    .newInstance(PluginHookMgr.this.plugin);
             hook.setPlugin(plugin);
             hook.onPluginEnable(plugin);
             Bukkit.getPluginManager().registerEvents(hook, plugin);
@@ -66,18 +69,17 @@ public class PluginHookMgr implements Listener {
                     + this.plugin.getDescription().getVersion() + ") "
                     + (hook != null ? hook.getClass().getSimpleName() : "?") + " of plugin "
                     + plugin.getName() + " v" + plugin.getDescription().getVersion()
-                    + ", please report this if you are using the latest version of that" +
-                    " plugin!");
+                    + ", please report this if you are using the latest version of that plugin!");
         } catch (Exception er) {
             if (er.getMessage() != null
                     && er.getMessage().contains("Unable to find handler list for event")) {
-                this.plugin.log(Level.WARNING, "" + er.getMessage()
+                this.plugin.log(Level.WARNING, er.getMessage()
                         + "; This is not an issue with SuperVanish");
                 return;
             } else if (er.getCause() != null && er.getCause().getMessage() != null && er.getCause()
-                    .getMessage().contains("Unable to find handler list for event ")) {
-                this.plugin.log(Level.WARNING, "" + er.getCause()
-                        .getMessage() + "; This is not an issue with SuperVanish");
+                    .getMessage().contains("Unable to find handler list for event")) {
+                this.plugin.log(Level.WARNING, er.getCause().getMessage()
+                        + "; This is not an issue with SuperVanish");
                 return;
             }
             this.plugin.logException(new InvalidPluginHookException(er));
@@ -87,9 +89,12 @@ public class PluginHookMgr implements Listener {
     }
 
     private boolean isHookDisabled(String pluginName) {
-        if (pluginName.equalsIgnoreCase("dynmap"))
-            return !plugin.getSettings().getBoolean("HookOptions.EnableDynmapHook");
-        return !plugin.getSettings().getBoolean("HookOptions.Enable" + pluginName + "Hook", true);
+        FileConfiguration config = plugin.getSettings();
+        String configKey = "hook_options.enable_" + pluginName.toLowerCase() + "_hook";
+        if (pluginName.equalsIgnoreCase("GriefPrevention")) {
+            return !config.getBoolean(configKey, false);
+        }
+        return !config.getBoolean(configKey, true);
     }
 
     @EventHandler
@@ -107,7 +112,8 @@ public class PluginHookMgr implements Listener {
     }
 
     private PluginHook getActiveHook(Plugin plugin) {
-        for (PluginHook hook : activeHooks) if (hook.getPlugin() == plugin) return hook;
+        for (PluginHook hook : activeHooks)
+            if (hook.getPlugin() == plugin) return hook;
         return null;
     }
 

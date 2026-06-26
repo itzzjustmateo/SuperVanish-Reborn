@@ -23,8 +23,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -35,27 +33,6 @@ public class EssentialsHook extends PluginHook {
 
     private final Set<UUID> preVanishHiddenPlayers = new HashSet<>();
     private Essentials essentials;
-    private BukkitRunnable forcedInvisibilityRunnable = new BukkitRunnable() {
-
-        @Override
-        public void run() {
-            try {
-                if (!Bukkit.getPluginManager().isPluginEnabled("Essentials")) return;
-                for (UUID uuid : superVanish.getVanishStateMgr().getOnlineVanishedPlayers()) {
-                    Player p = Bukkit.getPlayer(uuid);
-                    User user = essentials.getUser(p);
-                    if (user == null) continue;
-                    if (!user.isHidden())
-                        user.setHidden(true);
-                }
-            } catch (Exception e) {
-                cancel();
-                superVanish.logException(e);
-            }
-        }
-    };
-
-    private BukkitTask forcedInvisibilityTask;
 
     public EssentialsHook(SuperVanishReborn superVanish) {
         super(superVanish);
@@ -64,27 +41,44 @@ public class EssentialsHook extends PluginHook {
     @Override
     public void onPluginEnable(Plugin plugin) {
         essentials = (Essentials) plugin;
-        forcedInvisibilityTask = forcedInvisibilityRunnable.runTaskTimer(superVanish, 0, 100);
-        forcedInvisibilityRunnable.run();
+        scheduleForcedInvisibility();
     }
 
     @Override
     public void onPluginDisable(Plugin plugin) {
         essentials = null;
-        forcedInvisibilityTask.cancel();
+    }
+
+    private void scheduleForcedInvisibility() {
+        superVanish.getServer().getScheduler().runTaskTimer(superVanish, () -> {
+            try {
+                if (essentials == null) return;
+                for (UUID uuid : superVanish.getVanishStateMgr().getOnlineVanishedPlayers()) {
+                    Player p = Bukkit.getPlayer(uuid);
+                    if (p == null) continue;
+                    User user = essentials.getUser(p);
+                    if (user != null && !user.isHidden()) {
+                        user.setHidden(true);
+                    }
+                }
+            } catch (Exception e) {
+                superVanish.logException(e);
+            }
+        }, 0L, 100L);
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerJoinEvent e) {
+        if (essentials == null) return;
         User user = essentials.getUser(e.getPlayer());
         if (user == null) return;
-        if (superVanish.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId()) && !user.isHidden())
-            user.setHidden(true);
-        else user.setHidden(false);
+        boolean vanished = superVanish.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId());
+        user.setHidden(vanished);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVanish(PlayerHideEvent e) {
+        if (essentials == null) return;
         User user = essentials.getUser(e.getPlayer());
         if (user == null) return;
         if (user.isVanished()) user.setVanished(false);
@@ -94,32 +88,30 @@ public class EssentialsHook extends PluginHook {
 
     @EventHandler
     public void onReappear(PostPlayerShowEvent e) {
+        if (essentials == null) return;
         User user = essentials.getUser(e.getPlayer());
         if (user == null) return;
         user.setHidden(false);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onCommand(final PlayerCommandPreprocessEvent e) {
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        if (essentials == null) return;
         if (!CommandAction.VANISH_SELF.checkPermission(e.getPlayer(), superVanish)) return;
         if (superVanish.getVanishStateMgr().isVanished(e.getPlayer().getUniqueId())) return;
-        String command = e.getMessage().toLowerCase(Locale.ENGLISH).split(" ")[0].replace("/", "")
-                .toLowerCase(Locale.ENGLISH);
-        if (command.split(":").length > 1) command = command.split(":")[1];
-        if (command.equals("supervanish") || command.equals("sv")
-                || command.equals("v") || command.equals("vanish")) {
-            final User user = essentials.getUser(e.getPlayer());
-            if (user == null || !user.isAfk()) return;
-            user.setHidden(true);
-            preVanishHiddenPlayers.add(e.getPlayer().getUniqueId());
-            superVanish.getServer().getScheduler().runTaskLater(superVanish, new Runnable() {
-                @Override
-                public void run() {
-                    if (preVanishHiddenPlayers.remove(e.getPlayer().getUniqueId())) {
-                        user.setHidden(false);
-                    }
-                }
-            }, 1);
-        }
+        String command = e.getMessage().toLowerCase(Locale.ENGLISH).split(" ")[0]
+                .replace("/", "").toLowerCase(Locale.ENGLISH);
+        if (command.contains(":")) command = command.split(":")[1];
+        if (!command.equals("supervanish") && !command.equals("sv")
+                && !command.equals("v") && !command.equals("vanish")) return;
+        User user = essentials.getUser(e.getPlayer());
+        if (user == null || !user.isAfk()) return;
+        user.setHidden(true);
+        preVanishHiddenPlayers.add(e.getPlayer().getUniqueId());
+        superVanish.getServer().getScheduler().runTaskLater(superVanish, () -> {
+            if (preVanishHiddenPlayers.remove(e.getPlayer().getUniqueId())) {
+                user.setHidden(false);
+            }
+        }, 1L);
     }
 }

@@ -66,31 +66,55 @@ public class PlaceholderAPIHook extends PluginHook {
         @Override
         public String onRequest(OfflinePlayer op, String id) {
             try {
-                Player p;
-                if (op instanceof Player)
-                    p = (Player) op;
-                else
-                    p = null;
-                if (id.equalsIgnoreCase("isvanished")
-                        || id.equalsIgnoreCase("isinvisible")
-                        || id.equalsIgnoreCase("vanished")
-                        || id.equalsIgnoreCase("invisible"))
+                Player p = op instanceof Player ? (Player) op : null;
+                String lower = id.toLowerCase();
+
+                if (lower.equals("isvanished") || lower.equals("isinvisible")
+                        || lower.equals("vanished") || lower.equals("invisible"))
                     return p != null && superVanish.getVanishStateMgr().isVanished(p.getUniqueId())
                             ? yes : no;
-                if (id.equalsIgnoreCase("vanishprefix"))
+
+                if (lower.equals("vanishprefix"))
                     return p != null && superVanish.getVanishStateMgr().isVanished(p.getUniqueId())
                             ? prefix : "";
-                if (id.equalsIgnoreCase("vanishsuffix"))
+
+                if (lower.equals("vanishsuffix"))
                     return p != null && superVanish.getVanishStateMgr().isVanished(p.getUniqueId())
                             ? suffix : "";
-                if (id.equalsIgnoreCase("onlinevanishedplayers")
-                        || id.equalsIgnoreCase("onlinevanished")
-                        || id.equalsIgnoreCase("invisibleplayers")
-                        || id.equalsIgnoreCase("vanishedplayers")
-                        || id.equalsIgnoreCase("hiddenplayers")) {
+
+                if (lower.equals("can_see") && p != null) {
+                    return superVanish.getLayeredPermissionChecker()
+                            .hasPermissionToSee(p, p) ? yes : no;
+                }
+
+                if (lower.startsWith("is_vanished_") && p != null) {
+                    String targetName = lower.substring("is_vanished_".length());
+                    Player target = Bukkit.getPlayerExact(targetName);
+                    if (target != null) {
+                        return superVanish.getVanishStateMgr().isVanished(target.getUniqueId())
+                                ? yes : no;
+                    }
+                    return no;
+                }
+
+                if (lower.equals("server_vanished_count")) {
+                    return String.valueOf(superVanish.getVanishStateMgr()
+                            .getOnlineVanishedPlayers().size());
+                }
+
+                if (lower.equals("total_vanished_count")) {
+                    return String.valueOf(superVanish.getVanishStateMgr()
+                            .getVanishedPlayers().size());
+                }
+
+                if (lower.equals("onlinevanishedplayers")
+                        || lower.equals("onlinevanished")
+                        || lower.equals("invisibleplayers")
+                        || lower.equals("vanishedplayers")
+                        || lower.equals("hiddenplayers")) {
                     Collection<UUID> onlineVanishedPlayers = superVanish.getVanishStateMgr()
                             .getOnlineVanishedPlayers();
-                    String playerListMessage = "";
+                    StringBuilder playerList = new StringBuilder();
                     for (UUID uuid : onlineVanishedPlayers) {
                         Player onlineVanished = Bukkit.getPlayer(uuid);
                         if (onlineVanished == null) continue;
@@ -99,23 +123,33 @@ public class PlaceholderAPIHook extends PluginHook {
                                 && !superVanish.hasPermissionToSee(p, onlineVanished)) {
                             continue;
                         }
-                        playerListMessage = playerListMessage + onlineVanished.getName() + ", ";
+                        if (!playerList.isEmpty()) playerList.append(", ");
+                        playerList.append(onlineVanished.getName());
                     }
-                    return playerListMessage.length() > 3
-                            ? playerListMessage.substring(0, playerListMessage.length() - 2)
-                            : playerListMessage;
+                    return playerList.toString();
                 }
-                if (id.equalsIgnoreCase("playercount")
-                        || id.equalsIgnoreCase("onlineplayers")) {
+
+                if (lower.equals("playercount") || lower.equals("onlineplayers")) {
                     int playercount = Bukkit.getOnlinePlayers().size();
-                    for (UUID uuid : superVanish.getVanishStateMgr()
-                            .getOnlineVanishedPlayers()) {
+                    for (UUID uuid : superVanish.getVanishStateMgr().getOnlineVanishedPlayers()) {
                         Player onlineVanished = Bukkit.getPlayer(uuid);
                         if (onlineVanished == null) continue;
-                        if (p == null || !superVanish.canSee(p, onlineVanished)) playercount--;
+                        if (p == null || !superVanish.canSee(p, onlineVanished))
+                            playercount--;
                     }
-                    return playercount + "";
+                    return String.valueOf(playercount);
                 }
+
+                if (lower.equals("can_see_vanished")) {
+                    if (p == null) return no;
+                    for (UUID uuid : superVanish.getVanishStateMgr().getOnlineVanishedPlayers()) {
+                        Player vanished = Bukkit.getPlayer(uuid);
+                        if (vanished != null && superVanish.canSee(p, vanished))
+                            return yes;
+                    }
+                    return no;
+                }
+
             } catch (Exception e) {
                 superVanish.logException(e);
             }

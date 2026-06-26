@@ -167,6 +167,8 @@ hook_options:
   enable_citizens_hook: true
   # Should SV use OpenInv for opening chests silently?
   enable_open_inv_hook: true
+  # Should SV hook into GriefPrevention to hide claim visualizations for vanished players?
+  enable_grief_prevention_hook: false
 
 ############# Compatibility Options ##############
 compatibility_options:

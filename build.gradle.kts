@@ -51,6 +51,8 @@ dependencies {
     }
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("com.github.Jikoo:OpenInv:5.1.12")
+    compileOnly("com.github.GriefPrevention:GriefPrevention:18.0.0")
+    compileOnly("net.luckperms:api:5.4")
 
     // Brigadier
     implementation("com.mojang:brigadier:1.0.18")
