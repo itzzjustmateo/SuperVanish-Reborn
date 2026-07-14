@@ -66,7 +66,7 @@ public class PlaceholderConverter {
                 OfflinePlayer specifiedPlayer = (OfflinePlayer) unspecifiedPlayer;
                 // MVdWPlaceholderAPI
                 if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")
-                        && plugin.getSettings().getBoolean("hook_options.enable_mvdw_placeholder_api_hook", true)) {
+                        && plugin.getSettings().getBoolean("hook_options.enable_mvdw_placeholder_api", true)) {
                     String replaced = PlaceholderAPI.replacePlaceholders(specifiedPlayer, msg);
                     msg = replaced == null ? msg : replaced;
                 }
@@ -97,13 +97,13 @@ public class PlaceholderConverter {
                 Player specifiedPlayer = (Player) unspecifiedPlayer;
                 // PlaceholderAPI
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")
-                        && plugin.getSettings().getBoolean("hook_options.enable_placeholder_api_hook", true)) {
+                        && plugin.getSettings().getBoolean("hook_options.enable_placeholder_api", true)) {
                     String replaced = PlaceholderAPIHook.translatePlaceholders(msg, specifiedPlayer);
                     msg = replaced == null ? msg : replaced;
                 }
                 // MVdWPlaceholderAPI
                 if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")
-                        && plugin.getSettings().getBoolean("hook_options.enable_mvdw_placeholder_api_hook", true)) {
+                        && plugin.getSettings().getBoolean("hook_options.enable_mvdw_placeholder_api", true)) {
                     String replaced = PlaceholderAPI.replacePlaceholders(specifiedPlayer, msg);
                     msg = replaced == null ? msg : replaced;
                 }

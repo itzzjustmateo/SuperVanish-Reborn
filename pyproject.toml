@@ -1,0 +1,8 @@
+[project]
+name = "supervanish-reborn-tools"
+version = "0.1.0"
+description = "Build and release tools for SuperVanish Reborn"
+requires-python = ">=3.11"
+
+[tool.uv]
+dev-dependencies = []

@@ -101,6 +101,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
             configMgr.prepareFiles();
             placeholderConverter = new PlaceholderConverter(this);
             layeredPermissionChecker = new LayeredPermissionChecker(this);
+            layeredPermissionChecker.init();
             command = new VanishCommand(this);
             versionUtil = new VersionUtil(this);
             // --- Vanish state manager: database or file ---
@@ -121,7 +122,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
             } else {
                 vanishStateMgr = new FileVanishStateMgr(this);
             }
-            if (getSettings().getBoolean("miscellaneous_options.update_checker.enable", true))
+            if (getSettings().getBoolean("misc.update_checker.enable", true))
                 updateNotifier = new UpdateNotifier(this);
             visibilityChanger = new VisibilityChanger(new PreventionHider(this), this);
             if (versionUtil.isOneDotXOrHigher(8) && useProtocolLib)
@@ -168,7 +169,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             boolean itemPickUps = getPlayerData().getBoolean(
                     "PlayerData." + player.getUniqueId() + ".itemPickUps",
-                    getSettings().getBoolean("invisibility_features.default_pick_up_items_option"));
+                    getSettings().getBoolean("invisibility_features.default_pick_up_items"));
             boolean vanished = vanishStateMgr.isVanished(player.getUniqueId());
             createVanishPlayer(player, itemPickUps);
             if (vanished) {
@@ -255,7 +256,7 @@ public class SuperVanishReborn extends JavaPlugin implements SuperVanishPlugin {
         // ensure that there is always a vanish player
         boolean itemPickUps = getPlayerData().getBoolean(
                 "PlayerData." + player.getUniqueId() + ".itemPickUps",
-                getSettings().getBoolean("invisibility_features.default_pick_up_items_option"));
+                getSettings().getBoolean("invisibility_features.default_pick_up_items"));
         final VanishPlayer vanishPlayer = new VanishPlayer(player, this, itemPickUps);
         vanishPlayers.add(vanishPlayer);
         return vanishPlayer;

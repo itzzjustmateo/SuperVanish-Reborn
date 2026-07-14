@@ -1,198 +1,93 @@
-# SuperVanish v${project.version} - Configuration
+# SuperVanish v${project.version}
 
-############# Invisibility Features ##############
 invisibility_features:
-  # Should invisible players get night vision?
-  night_vision_effect: true
-  # Should SV disable damage for invisible players?
+  night_vision: true
   disable_damage: true
-  # Should SV disable hunger for invisible players?
   disable_hunger: true
-  # Should SV prevent mobs from targeting invisible players?
   disable_mob_target: true
-  # Should invisible players open chests and shulker boxes without the animation and sound?
-  # This makes them go into spectator mode temporarily. It's better to only give access to this feature
-  # to staff members since a server crash can cause players to stay in spectator mode.
-  # Permission: sv.silentchest
+  # Permission: sv.silentchest — temporarily enters spectator to open chests silently
   open_chests_silently: true
-  # Should invisible players not be able to trigger pressure plates and tripwire?
-  # If this feature is enabled invisible players can't trigger pressure plates and tripwire.
   disable_pressure_plates: true
-  # Should invisible players not be able to push other players or be able to be pushed?
-  # WARNING: Uses the scoreboard and may conflict with other plugins!
+  # Uses scoreboard — may conflict with other plugins
   disable_push: false
-  # Should vanished players pick up items by default? This can be changed individually with /sv tipu
-  default_pick_up_items_option: false
-  # Should SV modify tablist packets to prevent the server from leaking who is online?
-  # This currently only works on versions below 1.19
+  default_pick_up_items: false
+  # Below 1.19 only
   modify_tablist_packets: true
-  # Should SV modify tab complete packets to prevent minecraft commands from leaking who is online?
   modify_tab_complete_packets: true
-  # Should vanished players be unable to trigger the vibration of a sculk sensor?
-  prevent_sculk_sensor_activation: true
-  # Should vanished players be unable to break turtle eggs?
-  prevent_turtle_egg_breaking: true
-  # Should vanished players not activate the tipping effect on dripleaves?
+  prevent_sculk_sensor: true
+  prevent_turtle_egg_break: true
   disable_drip_leaf: true
-  # Should vanished players be unable to trigger raids?
-  prevent_raid_triggering: true
-  # Should vanished players be unable to make mobs spawn? (paper only)
+  prevent_raid_trigger: true
+  # Paper only
   prevent_mob_spawning: true
-
   fly:
-    # Should invisible players be able to fly even if they aren't in creative/spectator mode?
     enable: true
-    # Should invisible players WITHOUT the permission 'sv.keepfly' lose the ability to fly on reappear?
+    # Players without sv.keepfly lose flight on reappear
     disable_on_reappear: true
 
-############# Vanish State Features ##############
 vanish_state_features:
-  # Should players with the permission 'sv.joinvanished' join vanished all the time?
-  # Doesn't work if you use GroupManager for permissions
   auto_vanish_on_join: false
-  # Should invisible players reappear automatically when they change their world?
   reappear_on_world_change: false
-  # Should invisible players reappear automatically when they leave the server?
   reappear_on_quit: false
-  # Should invisible players reappear automatically
-  # when they change their world and don't have the permission 'sv.use' anymore?
   check_permission_on_world_change: false
-  # Should invisible players reappear automatically
-  # when they leave the server and don't have the permission 'sv.use' anymore?
   check_permission_on_quit: false
-  # Should invisible players reappear automatically
-  # when they join the server and don't have the permission 'sv.use' anymore?
-  # Doesn't work if you use GroupManager for permissions
   check_permission_on_login: false
 
-############## Indication Features ###############
 indication_features:
   layered_permissions:
-    # Should players with the permission 'sv.see' be able to see invisible players in the tablist & in-game?
     enable_see_permission: true
-    # Should sv.use and sv.see be layered? => sv.use.levelX, sv.see.levelX
-    # Players can see a vanished player if their see level is higher or equal to the other player's use level
-    # Note: You have to rejoin for changes to take effect if you changed those permissions while being online
+    # sv.use.levelX / sv.see.levelX — see level must be >= target use level
     layered_see_and_use_permissions: false
-    # What should be the highest level for both permissions?
-    # Lower amounts might improve performance with more players since they reduce the amount of permission checks
+    # Lower values reduce permission checks on large servers
     max_level: 100
-  # Should vanished players show up dark gray in the tablist and should only their head be visible?
-  # Only players who are allowed to see the player will see this effect; this helps other staff with
-  # differentiating them from players they should talk to; Requires ProtocolLib
-  # This currently only works on versions below 1.19
-  mark_vanished_players_as_spectators: true
+  # Below 1.19 only; shows vanished players dark gray in tablist (requires ProtocolLib)
+  mark_vanished_as_spectators: true
 
-################ Message Options #################
 message_options:
-  fake_join_quit_messages:
-    # Should SV broadcast any kind of announcement (fake quit or player vanished) when a player vanishes?
-    # You can change the messages in the messages.yml file.
+  fake_join_quit:
     broadcast_fake_quit_on_vanish: true
-    # Should SV broadcast any kind of announcement (fake join or player reappeared) when a player reappears?
-    # You can change the messages in the messages.yml file.
     broadcast_fake_join_on_reappear: true
-    # Should players with the permission 'sv.see' get an admin announcement instead of a fake join/quit message?
-    # You can change the messages in the messages.yml file.
-    announce_vanish_reappear_to_admins: true
-    # Should there only be admin announcements and no fake join/quit messages?
-    send_message_only_to_admins: false
-    # Should there only be fake join/quit messages and no admin announcements?
-    send_message_only_to_users: false
-
-  # Should SV hide the real join/leave messages of invisible players?
-  hide_real_join_quit_messages: true
-  # Should SV hide the advancement messages of invisible players (only send it to the player)? (paper only)
+    announce_to_admins: true
+    admins_only: false
+    users_only: false
+  hide_real_join_quit: true
   hide_advancement_messages: true
-  # Should SV hide leave messages for invisible players if 'VanishStateFeatures->ReappearOnQuit' is turned on?
-  # Overrides 'HideRealJoinQuitMessages'
-  reappear_on_quit_hide_leave_msg: true
-  # If the setting above is turned on, should players with the permission 'sv.see' get
-  # a message when an invisible player joins/quits?
+  reappear_on_quit_hide_leave: true
   announce_real_join_quit_to_admins: true
-  # If the setting above is turned on, should players with the permission 'sv.see' get
-  # a message when an invisible player dies?
   announce_death_to_admins: true
-  # Should SV remind players who join the server vanished of being invisible (in chat)?
-  # You can change the message in the messages.yml file.
   remind_vanished_on_join: true
-  # Should invisible players have an action bar which tells them that they're invisible?
-  # You can change the action bar in the messages.yml file.
   display_action_bar: true
 
-############## Restrictive Options ###############
 restrictive_options:
-  # Should invisible players not be able to break blocks?
-  # Bypass permission: sv.breakblocks
-  prevent_block_breaking: false
-  # Should invisible players not be able to place blocks?
-  # Bypass permission: sv.placeblocks
-  prevent_block_placing: false
-  # Should invisible players not be able to damage players or mobs?
-  # Bypass permission: sv.damage
-  prevent_hitting_entities: false
+  prevent_block_breaking: false   # bypass: sv.breakblocks
+  prevent_block_placing: false    # bypass: sv.placeblocks
+  prevent_hitting_entities: false # bypass: sv.damage
 
-############# External Invisibility ##############
 external_invisibility:
   server_list:
-    # Should this plugin adjust the amount of players in the serverlist? (-1 per invisible player)
-    adjust_amount_of_online_players: true
-    # Should this plugin hide invisible players in the list of logged in players?
-    # You can view this list when your mouse hovers over the amount of online players.
-    adjust_list_of_logged_in_players: true
+    adjust_player_count: true
+    hide_vanished_from_hover: true
 
-################## Hook Options ##################
 hook_options:
-  # Should SV hide invisible players in /who, /list, /online, /near, etc?
-  # Note: Players with the permission essentials.vanish.interact can still see invisible players in these commands
-  # Important: You have to reload both SV and Essentials if you change this setting (reload SV first)
-  enable_essentials_hook: true
-  # Should SV hide invisible players on your dynamic map and broadcast join/leave messages if you use Dynmap?
-  enable_dynmap_hook: true
-  # Should SV send fake join/leave messages in dynmap's web-chat?
-  # You can configure the join/leave messages in the messages.yml file
-  dynmap_send_join_leave_messages: true
-  # Should SV hook into TrailGUI and disable trails while you're vanished?
-  enable_trail_gui_hook: true
-  # Should SV hook into PlaceholderAPI and add new placeholders to SV + register its own ones for other plugins?
-  # Own ones: isvanished, vanishedplayers, playercount
-  # Format: %supervanish_<placeholder>%
-  enable_placeholder_api_hook: true
-  # Should SV hook into MVdWPlaceholderAPI and add new placeholders to SV + register its own ones for other
-  # plugins?
-  # Own ones: isvanished, vanishedplayers, playercount
-  # Format: {supervanish_<placeholder>}
-  enable_mvdw_placeholder_api_hook: true
-  # Should SV stop NPCs from greeting or talking about hidden players?
-  enable_citizens_hook: true
-  # Should SV use OpenInv for opening chests silently?
-  enable_open_inv_hook: true
+  enable_essentials: true
+  enable_dynmap: true
+  dynmap_fake_join_leave: true
+  enable_trail_gui: true
+  enable_placeholder_api: true
+  enable_mvdw_placeholder_api: true
+  enable_citizens: true
+  enable_open_inv: true
+  enable_grief_prevention: false
 
-############# Compatibility Options ##############
 compatibility_options:
-  # This section is for advanced users only!
-  # The event priority which SuperVanish should use for the specific event.
-  # Allowed values are LOWEST, LOW, NORMAL, HIGH, HIGHEST and MONITOR
-  # Higher priorities might override other plugins while lower ones might not
-
-  # The priority for removing the join message
-  player_join_event_priority: HIGH # <- keep HIGH if you use Essentials to modify join/quit messages !!
-  # The priority for removing the quit message
+  player_join_event_priority: HIGH
   player_quit_event_priority: HIGH
 
-############# Miscellaneous Options ##############
-miscellaneous_options:
+misc:
   update_checker:
-    # Should SV check for updates on spigot regularly? There is no automatic update; this just informs you
     enable: true
-    # Should players with the permission 'sv.notify' get notified if the current version of SV is outdated?
     notify_admins: true
 
-################# Database Sync ###################
-# Optional: sync vanish states across multiple servers via a shared database.
-# When enabled, every vanish/unvanish event is written to a shared table and a
-# background task polls for changes from other servers (see sync_interval_ticks).
-# Supported types: mysql, mariadb, postgresql
 database:
   enabled: false
   type: mysql
@@ -201,12 +96,8 @@ database:
   database: supervanish
   username: root
   password: ""
-  # Maximum number of connections in the pool
   pool_size: 4
-  # How often to pull the vanish state from the database, in ticks (20 ticks = 1 second)
   sync_interval_ticks: 40
-  # Optional: a unique name for this server shown in the database (auto-detected from hostname if empty)
   server_id: ""
 
-################# Do Not Touch ###################
 config_version: ${project.version}

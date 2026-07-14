@@ -117,7 +117,7 @@ public class UpdateNotifier {
                         public void run() {
                             notifyConsole();
                             if (plugin.getSettings().getBoolean(
-                                    "miscellaneous_options.update_checker.notify_admins"))
+                                    "misc.update_checker.notify_admins"))
                                 notifyAdmins();
                         }
                     }.runTask(plugin);

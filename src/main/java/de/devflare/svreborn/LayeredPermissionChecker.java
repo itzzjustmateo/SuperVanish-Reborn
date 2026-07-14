@@ -8,6 +8,9 @@
 
 package de.devflare.svreborn;
 
+import net.luckperms.api.LuckPerms;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,26 +19,39 @@ public class LayeredPermissionChecker {
 
     private final SuperVanishReborn plugin;
     private final FileConfiguration settings;
+    private LuckPerms lpInstance;
+    private boolean lpAvailable;
 
     public LayeredPermissionChecker(SuperVanishReborn plugin) {
         this.plugin = plugin;
         settings = plugin.getSettings();
     }
 
-    /**
-     * @return TRUE if sender has *permission* to use /sv on, else FALSE; TRUE doesn't mean that sender can
-     * actually use /sv on
-     */
+    public void init() {
+        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
+            try {
+                Class.forName("net.luckperms.api.LuckPerms");
+                lpInstance = Bukkit.getServicesManager().load(LuckPerms.class);
+                lpAvailable = lpInstance != null;
+            } catch (ClassNotFoundException e) {
+                lpAvailable = false;
+            }
+        } else {
+            lpAvailable = false;
+        }
+    }
+
     public boolean hasPermissionToVanish(CommandSender sender) {
         if (settings.getBoolean(
                 "IndicationFeatures.LayeredPermissions.LayeredSeeAndUsePermissions", false)) {
-            if (sender.hasPermission("sv.use")) return true;
+            if (checkLuckPermsContext(sender, "sv.use")) return true;
             int permissionLevel;
-            if (sender instanceof Player)
-                permissionLevel = plugin.getVanishPlayer((Player) sender).getUsePermissionLevel();
+            if (sender instanceof Player p)
+                permissionLevel = plugin.getVanishPlayer(p).getUsePermissionLevel();
             else permissionLevel = getLayeredPermissionLevel(sender, "use");
             return permissionLevel > 0 && sender.hasPermission("sv.use.level" + permissionLevel);
-        } else return sender.hasPermission("sv.use");
+        }
+        return checkLuckPermsContext(sender, "sv.use");
     }
 
     public boolean hasPermissionToSee(Player viewer, Player viewed) {
@@ -50,11 +66,10 @@ public class LayeredPermissionChecker {
             if (viewerLevel == 0) return false;
             int viewedLevel = Math.max(1, vanishViewed.getUsePermissionLevel());
             return viewerLevel >= viewedLevel;
-        } else {
-            boolean enableSeePermission = settings
-                    .getBoolean("IndicationFeatures.LayeredPermissions.EnableSeePermission", true);
-            return enableSeePermission && viewer.hasPermission("sv.see");
         }
+        boolean enableSeePermission = settings
+                .getBoolean("IndicationFeatures.LayeredPermissions.EnableSeePermission", true);
+        return enableSeePermission && viewer.hasPermission("sv.see");
     }
 
     public int getLayeredPermissionLevel(CommandSender sender, String permission) {
@@ -68,5 +83,15 @@ public class LayeredPermissionChecker {
             if (sender.hasPermission("sv." + permission + ".level" + i))
                 level = i;
         return level;
+    }
+
+    private boolean checkLuckPermsContext(CommandSender sender, String permission) {
+        if (!lpAvailable || lpInstance == null) return sender.hasPermission(permission);
+        if (!(sender instanceof Player player)) return sender.hasPermission(permission);
+        var user = lpInstance.getUserManager().getUser(player.getUniqueId());
+        if (user == null) return sender.hasPermission(permission);
+        var queryOptions = lpInstance.getContextManager().getQueryOptions(player);
+        return user.getCachedData().getPermissionData(queryOptions)
+                .checkPermission(permission).asBoolean();
     }
 }

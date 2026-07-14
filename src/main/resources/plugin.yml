@@ -18,6 +18,8 @@ softdepend:
 - MVdWPlaceholderAPI
 - Vault
 - OpenInv
+- GriefPrevention
+- LuckPerms
 commands:
   sv:
     usage: /sv

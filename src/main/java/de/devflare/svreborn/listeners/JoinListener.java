@@ -46,7 +46,7 @@ public class JoinListener implements EventExecutor, Listener {
                         if (!plugin.hasPermissionToSee(onlinePlayer, p))
                             plugin.getVisibilityChanger().getHider().setHidden(p, onlinePlayer, true);
                     // Join message
-                    if (plugin.getSettings().getBoolean("message_options.hide_real_join_quit_messages")) {
+                    if (plugin.getSettings().getBoolean("message_options.hide_real_join_quit")) {
                         e.setJoinMessage(null);
                         Broadcast.announceSilentJoin(p, plugin);
                     }
